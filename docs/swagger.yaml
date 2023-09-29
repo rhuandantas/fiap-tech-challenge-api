@@ -1,0 +1,48 @@
+basePath: /
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a documentation of all endpoints in the API.
+  title: VerifyMy API
+  version: 3.0.0
+paths:
+  /liveness:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+      summary: Show the status of server.
+      tags:
+      - Health
+  /readiness:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Show the status of server.
+      tags:
+      - Health
+produces:
+- application/json
+schemes:
+- http
+securityDefinitions:
+  JWT:
+    in: header
+    name: token
+    type: apiKey
+swagger: "2.0"
