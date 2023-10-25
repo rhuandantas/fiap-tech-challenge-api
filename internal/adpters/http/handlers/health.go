@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"net/http"
 )
 
 //go:generate mockgen -source=$GOFILE -package=mock_handlers -destination=../../../test/mock/handlers/$GOFILE
-type HealthCheck struct{}
+type HealthCheck struct {
+}
 
 func NewHealthCheck() *HealthCheck {
 	return &HealthCheck{}
@@ -20,8 +20,8 @@ func (h *HealthCheck) RegisterHealth(server *echo.Echo) {
 }
 
 // Liveness godoc
-// @Summary Show the status of server.
-// @Description get the status of server.
+// @Summary Show the status of http.
+// @Description get the status of http.
 // @Tags Health
 // @Accept */*
 // @Produce json
@@ -34,8 +34,8 @@ func (h *HealthCheck) Liveness(c echo.Context) error {
 }
 
 // Readiness godoc
-// @Summary Show the status of server.
-// @Description get the status of server.
+// @Summary Show the status of http.
+// @Description get the status of http.
 // @Tags Health
 // @Accept */*
 // @Produce json

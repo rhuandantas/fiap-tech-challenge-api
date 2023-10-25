@@ -9,17 +9,17 @@ import (
 
 //go:generate wire
 
-//	@title			VerifyMy API
+//	@title			Tech Challenge API
 //	@version		3.0.0
 //	@description	This is a documentation of all endpoints in the API.
 
-//		@host		localhost:3000
-//		@BasePath	/
-//	 @schemes http
-//	 @produce json
-//		@securityDefinitions.apikey	JWT
-//		@in							header
-//		@name						token
+// @host		localhost:3000
+// @BasePath	/
+// @schemes http
+// @produce json
+// @securityDefinitions.apikey	JWT
+// @in							header
+// @name						token
 func main() {
 	app, err := InitializeWebServer()
 	if err != nil {

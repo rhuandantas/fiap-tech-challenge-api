@@ -32,5 +32,5 @@ ginkgo -v ./...
 
 ### to access swagger doc
 ```
-http://localhost:3000/swagger/index.html
+http://localhost:3000/docs/index.html
 ```
