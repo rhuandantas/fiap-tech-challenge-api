@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"fiap-tech-challenge-api/internal/core/commons"
-	"github.com/google/uuid"
 	"github.com/paemuri/brdoc"
 	"time"
 	"unicode"
 )
 
 type Cliente struct {
-	Id              uuid.UUID `json:"id" xorm:"pk varchar(64)"`
+	Id              int64     `json:"id"`
 	Cpf             string    `json:"cpf" validate:"required" xorm:"unique"`
 	Nome            string    `json:"nome" validate:"required"`
 	Email           string    `json:"email" validate:"email"`

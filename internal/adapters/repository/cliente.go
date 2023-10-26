@@ -4,7 +4,6 @@ import (
 	"context"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
-	"github.com/google/uuid"
 	"xorm.io/xorm"
 )
 
@@ -27,8 +26,6 @@ func NewClienteRepo(connector DBConnector) ClienteRepo {
 }
 
 func (r *cliente) Insere(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error) {
-	newUUID, _ := uuid.NewUUID()
-	cliente.Id = newUUID
 	_, err := r.session.Context(ctx).Insert(cliente)
 	if err != nil {
 		if commons.IsDuplicatedEntryError(err) {
