@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	"go.uber.org/zap"
 )
 
 type Server struct {
@@ -18,10 +19,11 @@ type Server struct {
 	Server         *echo.Echo
 	healthHandler  *handlers.HealthCheck
 	clienteHandler *handlers.Cliente
+	produtoHandler *handlers.Produto
 }
 
 // NewAPIServer creates the main http with all configurations necessary
-func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente) *Server {
+func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto) *Server {
 	host := "127.0.0.1:3000"
 	appName := "tech-challenge-api"
 	app := echo.New()
@@ -32,6 +34,18 @@ func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.
 	app.Pre(middleware.RemoveTrailingSlash())
 	app.Use(middleware.Recover())
 	app.Use(middleware.CORS())
+	app.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			log.Info(
+				zap.String("URI", v.URI),
+				zap.Int("status", v.Status),
+			)
+
+			return nil
+		},
+	}))
 
 	app.GET("/docs/*", echoSwagger.WrapHandler)
 
@@ -41,12 +55,14 @@ func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.
 		Server:         app,
 		healthHandler:  healthHandler,
 		clienteHandler: clienteHandler,
+		produtoHandler: produtoHandler,
 	}
 }
 
 func (hs *Server) RegisterHandlers() {
 	hs.healthHandler.RegisterHealth(hs.Server)
 	hs.clienteHandler.RegistraRotasCliente(hs.Server)
+	hs.produtoHandler.RegistraRotasProduto(hs.Server)
 }
 
 // Start starts an application on specific port

@@ -4,6 +4,7 @@ import (
 	"fiap-tech-challenge-api/internal/core/commons"
 	"github.com/joomcode/errorx"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
 )
