@@ -32,7 +32,7 @@ func (r *cliente) Insere(ctx context.Context, cliente *domain.Cliente) (*domain.
 	_, err := r.session.Context(ctx).Insert(cliente)
 	if err != nil {
 		if commons.IsDuplicatedEntryError(err) {
-			return nil, commons.BadRequest.New("client already exists")
+			return nil, commons.BadRequest.New("client já existe")
 		}
 
 		return nil, err

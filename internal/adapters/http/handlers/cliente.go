@@ -4,19 +4,20 @@ import (
 	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
-	"fiap-tech-challenge-api/internal/core/usecases"
+	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
 	"github.com/joomcode/errorx"
+	"github.com/labstack/echo/v4"
 	"net/http"
 )
 
 type Cliente struct {
-	cadastraClienteUC   usecases.CadastrarClienteUseCase
-	pegaClientePorCPFUC usecases.PesquisarClientePorCPFUseCase
+	cadastraClienteUC   usecase.CadastrarClienteUseCase
+	pegaClientePorCPFUC usecase.PesquisarClientePorCPF
 	validator           util.Validator
 }
 
-func NewCliente(cadastraClienteUC usecases.CadastrarClienteUseCase, pegaClientePorCPFUC usecases.PesquisarClientePorCPFUseCase, validator util.Validator) *Cliente {
+func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePorCPFUC usecase.PesquisarClientePorCPF, validator util.Validator) *Cliente {
 	return &Cliente{
 		cadastraClienteUC:   cadastraClienteUC,
 		pegaClientePorCPFUC: pegaClientePorCPFUC,

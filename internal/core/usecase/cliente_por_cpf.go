@@ -1,4 +1,4 @@
-package usecases
+package usecase
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fiap-tech-challenge-api/internal/core/domain"
 )
 
-type PesquisarClientePorCPFUseCase interface {
+type PesquisarClientePorCPF interface {
 	Pesquisa(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
 }
 
@@ -14,7 +14,7 @@ type pesquisarClientePorCPFUC struct {
 	clienteRepo repository.ClienteRepo
 }
 
-func NewPesquisarClientePorCpf(clienteRepo repository.ClienteRepo) PesquisarClientePorCPFUseCase {
+func NewPesquisarClientePorCpf(clienteRepo repository.ClienteRepo) PesquisarClientePorCPF {
 	return &pesquisarClientePorCPFUC{
 		clienteRepo: clienteRepo,
 	}
