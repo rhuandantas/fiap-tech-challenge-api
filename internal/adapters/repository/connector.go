@@ -1,4 +1,4 @@
-package database
+package repository
 
 import (
 	"fiap-tech-challenge-api/internal/core/domain"
@@ -58,6 +58,7 @@ func NewMySQLConnector() DBConnector {
 func syncTables(engine *xorm.Engine) error {
 	err := engine.Sync(
 		new(domain.Cliente),
+		new(domain.Produto),
 	)
 	if err != nil {
 		return err

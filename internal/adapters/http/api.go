@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 	_ "fiap-tech-challenge-api/docs"
-	"fiap-tech-challenge-api/internal/adpters/http/handlers"
+	"fiap-tech-challenge-api/internal/adapters/http/handlers"
 	"fmt"
 	"github.com/joomcode/errorx"
 	"github.com/labstack/echo/v4"

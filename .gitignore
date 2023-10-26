@@ -22,4 +22,3 @@ go.work
 .idea
 wire_gen.go
 /test/mock/
-docs/
