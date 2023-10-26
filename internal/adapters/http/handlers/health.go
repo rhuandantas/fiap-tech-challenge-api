@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-//go:generate mockgen -source=$GOFILE -package=mock_handlers -destination=../../../test/mock/handlers/$GOFILE
 type HealthCheck struct {
 }
 
