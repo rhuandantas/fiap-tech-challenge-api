@@ -11,7 +11,7 @@ definitions:
       email:
         type: string
       id:
-        type: string
+        type: integer
       nome:
         type: string
       telefone:
@@ -22,6 +22,40 @@ definitions:
     - cpf
     - nome
     type: object
+  domain.Pagamento:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      tipo:
+        type: string
+      update:
+        type: string
+      valor:
+        type: number
+    type: object
+  domain.Pedido:
+    properties:
+      cliente:
+        $ref: '#/definitions/domain.Cliente'
+      createdAt:
+        type: string
+      id:
+        type: integer
+      pagamento:
+        $ref: '#/definitions/domain.Pagamento'
+      produtos:
+        items:
+          $ref: '#/definitions/domain.Produto'
+        type: array
+      status:
+        type: string
+      update:
+        type: string
+    type: object
   domain.Produto:
     properties:
       categoria:
@@ -31,7 +65,7 @@ definitions:
       descricao:
         type: string
       id:
-        type: string
+        type: integer
       updated_at:
         type: string
     type: object
@@ -91,6 +125,45 @@ paths:
       summary: Show the status of http.
       tags:
       - Health
+  /pedido:
+    patch:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: atualiza um pedido
+      tags:
+      - Pedido
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: cadastra um novo pedido
+      tags:
+      - Pedido
+  /pedidos/{statuses}:
+    get:
+      parameters:
+      - description: status dos pedidos a ser pesquisado
+        in: path
+        name: statuses
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Pedido'
+            type: array
+      summary: lista pedido por status
+      tags:
+      - Pedido
   /produto:
     post:
       consumes:
@@ -105,6 +178,15 @@ paths:
       summary: cadastra um novo produto
       tags:
       - Produto
+    put:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: atualiza um novo produto
+      tags:
+      - Produto
   /produto/{id}:
     delete:
       parameters:
@@ -115,9 +197,7 @@ paths:
         type: string
       produces:
       - application/json
-      responses:
-        "200":
-          description: OK
+      responses: {}
       summary: apaga produto por id
       tags:
       - Produto

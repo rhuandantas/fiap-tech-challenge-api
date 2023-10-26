@@ -7,10 +7,11 @@ import (
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
 	"fmt"
-	"github.com/joomcode/errorx"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+
+	"github.com/joomcode/errorx"
+	"github.com/labstack/echo/v4"
 )
 
 type Produto struct {
@@ -112,7 +113,6 @@ func (h *Produto) validateProdutoBody(p *domain.Produto) error {
 // @Tags Produto
 // @Produce json
 // @Param        id   path      string  true  "id do produto"
-// @Success 200
 // @Router /produto/{id} [delete]
 func (h *Produto) apaga(ctx echo.Context) error {
 	var (
@@ -140,7 +140,6 @@ func (h *Produto) apaga(ctx echo.Context) error {
 // @Tags Produto
 // @Accept json
 // @Produce json
-// @Success 200 {object}
 // @Router /produto [put]
 func (h *Produto) atualiza(ctx echo.Context) error {
 	var (

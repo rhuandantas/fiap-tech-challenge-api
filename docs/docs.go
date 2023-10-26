@@ -94,7 +94,79 @@ const docTemplate = `{
                 }
             }
         },
+        "/pedido": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "cadastra um novo pedido",
+                "responses": {}
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "atualiza um pedido",
+                "responses": {}
+            }
+        },
+        "/pedidos/{statuses}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "lista pedido por status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "status dos pedidos a ser pesquisado",
+                        "name": "statuses",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Pedido"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/produto": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produto"
+                ],
+                "summary": "atualiza um novo produto",
+                "responses": {}
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -134,11 +206,7 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
+                "responses": {}
             }
         },
         "/produtos/{categoria}": {
@@ -217,7 +285,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "nome": {
                     "type": "string"
@@ -226,6 +294,58 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Pagamento": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "number"
+                }
+            }
+        },
+        "domain.Pedido": {
+            "type": "object",
+            "properties": {
+                "cliente": {
+                    "$ref": "#/definitions/domain.Cliente"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "pagamento": {
+                    "$ref": "#/definitions/domain.Pagamento"
+                },
+                "produtos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Produto"
+                    }
+                },
+                "status": {
+                    "type": "string"
+                },
+                "update": {
                     "type": "string"
                 }
             }
@@ -243,7 +363,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"

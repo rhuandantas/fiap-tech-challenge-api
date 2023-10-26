@@ -1,22 +1,28 @@
 package domain
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
+const (
+	StatusRecebido     string = "recebido"
+	StatusEmpreparacao string = "em_preparacao"
+	StatusPronto       string = "pronto"
+	StatusFinalizada   string = "finalizada"
+)
+
 type Pedido struct {
-	Id        uuid.UUID `xorm:"pk varchar(64)"`
-	Status    []Status  `xorm:"extends"`
+	Id        int64     `json:"id"`
+	Status    string    `xorm:"status"`
 	Cliente   Cliente   `xorm:"extends"`
-	Produtos  []Produto
-	Pagamento Pagamento `xorm:"extends"`
 	CreatedAt time.Time `xorm:"created"`
 	Update    time.Time `xorm:"updated"`
 }
 
 type Status struct {
-	Id        uuid.UUID `xorm:"pk varchar(64)"`
+	Id        int64
+	IdPedido  int64
+	Name      string    `xorm:"status"`
 	CreatedAt time.Time `xorm:"created"`
 	Update    time.Time `xorm:"updated"`
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/gommon/log"
 	"xorm.io/xorm"
@@ -59,6 +60,7 @@ func syncTables(engine *xorm.Engine) error {
 	err := engine.Sync(
 		new(domain.Cliente),
 		new(domain.Produto),
+		new(domain.Pedido),
 	)
 	if err != nil {
 		return err

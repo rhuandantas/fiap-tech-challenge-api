@@ -9,6 +9,7 @@ import (
 	"fiap-tech-challenge-api/internal/adapters/repository"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
+
 	"github.com/google/wire"
 )
 
@@ -17,15 +18,18 @@ func InitializeWebServer() (*http.Server, error) {
 		util.NewCustomValidator,
 		repository.NewClienteRepo,
 		repository.NewProdutoRepo,
+		repository.NewPedidoRepo,
 		usecase.NewCadastraCliente,
 		usecase.NewPesquisarClientePorCpf,
 		usecase.NewCadastraProduto,
 		usecase.NewPegaProdutoPorCategoria,
 		usecase.NewApagaProduto,
 		usecase.NewAtualizaProduto,
+		usecase.NewListaPedidoPorStatus,
 		handlers.NewCliente,
 		handlers.NewProduto,
 		handlers.NewHealthCheck,
+		handlers.NewPedido,
 		http.NewAPIServer)
 	return &http.Server{}, nil
 }

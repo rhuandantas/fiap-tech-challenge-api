@@ -5,6 +5,7 @@ import (
 	_ "fiap-tech-challenge-api/docs"
 	"fiap-tech-challenge-api/internal/adapters/http/handlers"
 	"fmt"
+
 	"github.com/joomcode/errorx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -20,10 +21,11 @@ type Server struct {
 	healthHandler  *handlers.HealthCheck
 	clienteHandler *handlers.Cliente
 	produtoHandler *handlers.Produto
+	pedidoHandler  *handlers.Pedido
 }
 
 // NewAPIServer creates the main http with all configurations necessary
-func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto) *Server {
+func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto, pedidoHandler *handlers.Pedido) *Server {
 	host := "127.0.0.1:3000"
 	appName := "tech-challenge-api"
 	app := echo.New()
@@ -56,6 +58,7 @@ func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.
 		healthHandler:  healthHandler,
 		clienteHandler: clienteHandler,
 		produtoHandler: produtoHandler,
+		pedidoHandler:  pedidoHandler,
 	}
 }
 
@@ -63,6 +66,7 @@ func (hs *Server) RegisterHandlers() {
 	hs.healthHandler.RegisterHealth(hs.Server)
 	hs.clienteHandler.RegistraRotasCliente(hs.Server)
 	hs.produtoHandler.RegistraRotasProduto(hs.Server)
+	hs.pedidoHandler.RegistraRotasPedido(hs.Server)
 }
 
 // Start starts an application on specific port
