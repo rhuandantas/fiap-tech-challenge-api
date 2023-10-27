@@ -10,7 +10,7 @@ import (
 )
 
 type Cliente struct {
-	Id              int64     `json:"id"`
+	Id              int64     `json:"id" xorm:"pk autoincr 'cliente_id'"`
 	Cpf             string    `json:"cpf" validate:"required" xorm:"unique"`
 	Nome            string    `json:"nome" validate:"required"`
 	Email           string    `json:"email" validate:"email"`

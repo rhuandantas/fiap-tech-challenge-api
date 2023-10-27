@@ -46,10 +46,10 @@ func NewMySQLConnector() DBConnector {
 	engine.ShowSQL(true) // TODO it should come from env
 	//engine.Logger().SetLevel(log.DEBUG)
 	engine.SetMapper(names.SnakeMapper{})
-	err = syncTables(engine)
-	if err != nil {
+	if err = syncTables(engine); err != nil {
 		log.Fatal("failed to sync tables ", err.Error())
 	}
+
 	return &MySQLConnector{
 		engine: engine,
 	}
@@ -57,14 +57,19 @@ func NewMySQLConnector() DBConnector {
 
 // syncTables allows us to synchronize our tables on the databases: create, updates, table, columns, indexes
 func syncTables(engine *xorm.Engine) error {
-	err := engine.Sync(
+	if err := engine.Sync(
 		new(domain.Cliente),
 		new(domain.Produto),
-		new(domain.Pedido),
-	)
-	if err != nil {
+		new(domain.PedidoDTO),
+		new(domain.PedidoProduto),
+		new(domain.Status),
+	); err != nil {
 		return err
 	}
+
+	//if err := engine.CreateTables(domain.PedidoDTO{}); err != nil {
+	//	return err
+	//}
 
 	return nil
 }

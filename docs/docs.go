@@ -107,7 +107,9 @@ const docTemplate = `{
                 ],
                 "summary": "cadastra um novo pedido",
                 "responses": {}
-            },
+            }
+        },
+        "/pedido/{id}": {
             "patch": {
                 "consumes": [
                     "application/json"
@@ -118,7 +120,7 @@ const docTemplate = `{
                 "tags": [
                     "Pedido"
                 ],
-                "summary": "atualiza um pedido",
+                "summary": "atualiza o status do pedido",
                 "responses": {}
             }
         },
@@ -298,43 +300,20 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Pagamento": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "tipo": {
-                    "type": "string"
-                },
-                "update": {
-                    "type": "string"
-                },
-                "valor": {
-                    "type": "number"
-                }
-            }
-        },
         "domain.Pedido": {
             "type": "object",
             "properties": {
                 "cliente": {
                     "$ref": "#/definitions/domain.Cliente"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "pagamento": {
-                    "$ref": "#/definitions/domain.Pagamento"
+                "observacao": {
+                    "type": "string"
                 },
                 "produtos": {
                     "type": "array",
@@ -345,7 +324,7 @@ const docTemplate = `{
                 "status": {
                     "type": "string"
                 },
-                "update": {
+                "updated": {
                     "type": "string"
                 }
             }

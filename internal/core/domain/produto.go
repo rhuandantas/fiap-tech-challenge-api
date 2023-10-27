@@ -13,7 +13,7 @@ const (
 )
 
 type Produto struct {
-	Id        int64     `json:"id"`
+	Id        int64     `json:"id" xorm:"pk autoincr 'produto_id'"`
 	Descricao string    `json:"descricao" xorm:"unique"`
 	Categoria string    `json:"categoria"`
 	CreatedAt time.Time `json:"created_at" xorm:"created"`

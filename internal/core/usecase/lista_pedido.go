@@ -5,6 +5,7 @@ import (
 	"fiap-tech-challenge-api/internal/adapters/repository"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
+	"fiap-tech-challenge-api/internal/core/usecase/mapper"
 	"fmt"
 	"strings"
 )
@@ -25,7 +26,8 @@ type ListarPedidoPorStatus interface {
 }
 
 type listaPedidoPorStatus struct {
-	repo repository.PedidoRepo
+	repo         repository.PedidoRepo
+	mapperPedido mapper.Pedido
 }
 
 func (uc *listaPedidoPorStatus) ListaPorStatus(ctx context.Context, statuses []string) ([]*domain.Pedido, error) {
@@ -33,18 +35,23 @@ func (uc *listaPedidoPorStatus) ListaPorStatus(ctx context.Context, statuses []s
 		return nil, err
 	}
 
-	return uc.repo.PesquisaPorStatus(ctx, statuses)
+	pedidos, err := uc.repo.PesquisaPorStatus(ctx, statuses)
+	if err != nil {
+		return nil, err
+	}
+	return uc.mapperPedido.MapDTOToModels(pedidos), nil
 }
 
-func NewListaPedidoPorStatus(repo repository.PedidoRepo) ListarPedidoPorStatus {
+func NewListaPedidoPorStatus(repo repository.PedidoRepo, mapperPedido mapper.Pedido) ListarPedidoPorStatus {
 	return &listaPedidoPorStatus{
-		repo: repo,
+		repo:         repo,
+		mapperPedido: mapperPedido,
 	}
 }
 
 func ValidaStatuses(statuses []string) error {
 	for _, s := range statuses {
-		if validStatusesSet[strings.ToLower(s)] {
+		if !validStatusesSet[strings.ToLower(s)] {
 			return commons.BadRequest.New(fmt.Sprintf("%s não é um status valido", s))
 		}
 	}

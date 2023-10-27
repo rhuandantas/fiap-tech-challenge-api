@@ -7,32 +7,36 @@ import (
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
 	"fmt"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/joomcode/errorx"
-	"github.com/labstack/echo/v4"
 )
 
 type Pedido struct {
 	validator        util.Validator
 	listaPorStatusUC usecase.ListarPedidoPorStatus
+	cadastraPedidoUC usecase.CadastrarPedido
 }
 
 func NewPedido(validator util.Validator,
 	listaPorStatusUC usecase.ListarPedidoPorStatus,
+	cadastraPedidoUC usecase.CadastrarPedido,
 ) *Pedido {
 	return &Pedido{
 		validator:        validator,
 		listaPorStatusUC: listaPorStatusUC,
+		cadastraPedidoUC: cadastraPedidoUC,
 	}
 }
 
 func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 	server.POST("/pedido", h.cadastra)
 	server.GET("/pedidos/:statuses", h.listaPorStatus)
-	server.PATCH("/pedido", h.atualizaStatus)
+	server.GET("/pedidos/detail/:id", h.listaPorStatus)
+	server.PATCH("/pedido/:id", h.atualizaStatus)
 }
 
 // cadastra godoc
@@ -43,24 +47,24 @@ func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 // @Router /pedido [post]
 func (h *Pedido) cadastra(ctx echo.Context) error {
 	var (
-		pedido domain.Pedido
-		err    error
+		req domain.PedidoRequest
+		err error
 	)
 
-	if err = ctx.Bind(&pedido); err != nil {
+	if err = ctx.Bind(&req); err != nil {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
 	}
 
-	if err = h.validatePedidoBody(&pedido); err != nil {
+	if err = h.validatePedidoBody(&req); err != nil {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
 	}
 
-	/*newProduto, err := h.cadastraProdutoUC.Cadastra(ctx.Request().Context(), &pedido)
+	response, err := h.cadastraPedidoUC.Cadastra(ctx.Request().Context(), &req)
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
-	*/
-	return ctx.JSON(http.StatusCreated, nil)
+
+	return ctx.JSON(http.StatusCreated, echo.Map{"id": response.Id})
 }
 
 // listaPorStatus godoc
@@ -81,7 +85,7 @@ func (h *Pedido) listaPorStatus(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, pedidos)
 }
 
-func (h *Pedido) validatePedidoBody(p *domain.Pedido) error {
+func (h *Pedido) validatePedidoBody(p *domain.PedidoRequest) error {
 	if err := h.validator.ValidateStruct(p); err != nil {
 		return err
 	}
@@ -91,27 +95,31 @@ func (h *Pedido) validatePedidoBody(p *domain.Pedido) error {
 	return nil
 }
 
-// atualiza godoc
-// @Summary atualiza um pedido
+// atualizaStatus godoc
+// @Summary atualiza o status do pedido
 // @Tags Pedido
 // @Accept json
 // @Produce json
-// @Router /pedido [patch]
+// @Router /pedido/{id} [patch]
 func (h *Pedido) atualizaStatus(ctx echo.Context) error {
 	var (
-		pedido   domain.Pedido
-		pedidoID int
-		err      error
+		status struct {
+			Status string `json:"status"`
+		}
+		//pedidoID int
+		err error
 	)
 
-	if err = ctx.Bind(&pedido); err != nil {
+	if err = ctx.Bind(&status); err != nil {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
 	}
 
 	id := ctx.Param("id")
-	if pedidoID, err = strconv.Atoi(id); err != nil {
+	if _, err = strconv.Atoi(id); err != nil {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
 	}
 
-	return ctx.JSON(http.StatusOK, pedidoID)
+	// h.atualizaStatusUC.Atualiza(ctx.Request().Context(), status.Status)
+
+	return ctx.JSON(http.StatusOK, status)
 }
