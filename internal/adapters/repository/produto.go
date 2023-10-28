@@ -19,6 +19,7 @@ type ProdutoRepo interface {
 	Insere(ctx context.Context, produto *domain.Produto) (*domain.Produto, error)
 	PesquisaPorCategoria(ctx context.Context, produto *domain.Produto) ([]*domain.Produto, error)
 	PesquisaPorID(ctx context.Context, produto *domain.Produto) (*domain.Produto, error)
+	PesquisaPorIDS(ctx context.Context, ids []int64) ([]*domain.Produto, error)
 	Apaga(ctx context.Context, produto *domain.Produto) error
 	Atualiza(ctx context.Context, produto *domain.Produto, id int64) error
 }
@@ -64,6 +65,16 @@ func (p *produto) PesquisaPorID(ctx context.Context, produto *domain.Produto) (*
 	}
 
 	return produto, nil
+}
+
+func (p *produto) PesquisaPorIDS(ctx context.Context, ids []int64) ([]*domain.Produto, error) {
+	var produtos []*domain.Produto
+	err := p.session.Context(ctx).In("produto_id", ids).Find(&produtos)
+	if err != nil {
+		return nil, err
+	}
+
+	return produtos, nil
 }
 
 func (p *produto) Apaga(ctx context.Context, produto *domain.Produto) error {

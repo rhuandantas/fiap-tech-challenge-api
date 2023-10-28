@@ -39,7 +39,7 @@ func NewMySQLConnector() DBConnector {
 		err        error
 	)
 
-	engine, err := xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@/%s?charset=utf8", dbUser, dbPassword, dbName))
+	engine, err := xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?charset=utf8", dbUser, dbPassword, dbName))
 	if err != nil {
 		panic(err)
 	}

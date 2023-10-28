@@ -27,8 +27,8 @@ func (h *HealthCheck) RegisterHealth(server *echo.Echo) {
 // @Success 200 {string} string "token"
 // @Router /liveness [get]
 func (h *HealthCheck) Liveness(c echo.Context) error {
-	response := make(map[string]string)
-	response["status"] = "UP"
+	response := make(map[string]bool)
+	response["status"] = true
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -41,7 +41,7 @@ func (h *HealthCheck) Liveness(c echo.Context) error {
 // @Success 200 {string} string "OK"
 // @Router /readiness [get]
 func (h *HealthCheck) Readiness(c echo.Context) error {
-	response := make(map[string]string)
-	response["status"] = "OK"
+	response := make(map[string]bool)
+	response["status"] = true
 	return c.JSON(http.StatusOK, response)
 }

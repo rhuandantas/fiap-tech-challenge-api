@@ -22,10 +22,18 @@ type PedidoDTO struct {
 	ClienteId  int64      `xorm:"index"`
 	Cliente    *Cliente   `xorm:"-"`
 	Produtos   []*Produto `xorm:"-"`
+	ProdutoIDS string     `xorm:"'produtos'"`
 	Status     string
 	Observacao string
 	CreatedAt  time.Time `xorm:"created"`
 	UpdatedAt  time.Time `xorm:"updated"`
+}
+
+type Produtos []Produto
+type PedidoDetails struct {
+	Pedido
+	Cliente
+	Produtos
 }
 
 type PedidoProduto struct {

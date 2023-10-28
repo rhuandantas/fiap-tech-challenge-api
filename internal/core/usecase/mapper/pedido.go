@@ -2,6 +2,8 @@ package mapper
 
 import (
 	"fiap-tech-challenge-api/internal/core/domain"
+	"fmt"
+	"strings"
 )
 
 type Pedido interface {
@@ -29,9 +31,14 @@ func (p pedido) MapDTOToResponse(dto *domain.PedidoDTO) *domain.PedidoResponse {
 }
 
 func (p pedido) MapReqToDTO(req *domain.PedidoRequest) *domain.PedidoDTO {
+	ids := make([]string, len(req.ProdutoIds))
+	for i, id := range req.ProdutoIds {
+		ids[i] = fmt.Sprint(id)
+	}
 	return &domain.PedidoDTO{
 		ClienteId:  req.ClienteId,
 		Observacao: req.Observacao,
+		ProdutoIDS: strings.Join(ids, ","),
 	}
 }
 

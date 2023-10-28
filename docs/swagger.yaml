@@ -130,6 +130,24 @@ paths:
       summary: atualiza o status do pedido
       tags:
       - Pedido
+  /pedido/detail/{id}:
+    get:
+      parameters:
+      - description: id do pedido a ser lista
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Pedido'
+      summary: lista detalhes do pedido
+      tags:
+      - Pedido
   /pedidos/{statuses}:
     get:
       parameters:

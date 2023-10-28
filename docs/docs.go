@@ -109,6 +109,34 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/pedido/detail/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "lista detalhes do pedido",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id do pedido a ser lista",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Pedido"
+                        }
+                    }
+                }
+            }
+        },
         "/pedido/{id}": {
             "patch": {
                 "consumes": [

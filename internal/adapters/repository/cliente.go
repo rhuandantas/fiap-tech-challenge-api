@@ -16,6 +16,7 @@ type cliente struct {
 type ClienteRepo interface {
 	Insere(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
 	PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
+	PesquisaPorId(ctx context.Context, id int64) (*domain.Cliente, error)
 }
 
 func NewClienteRepo(connector DBConnector) ClienteRepo {
@@ -52,4 +53,20 @@ func (r *cliente) PesquisaPorCPF(ctx context.Context, c *domain.Cliente) (*domai
 	}
 
 	return &cliente, nil
+}
+
+func (r *cliente) PesquisaPorId(ctx context.Context, id int64) (*domain.Cliente, error) {
+	c := domain.Cliente{
+		Id: id,
+	}
+	found, err := r.session.Context(ctx).Get(&c)
+	if err != nil {
+		return nil, err
+	}
+
+	if !found {
+		return nil, commons.NotFound.New("cliente não encontrado")
+	}
+
+	return &c, nil
 }

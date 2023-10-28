@@ -16,7 +16,8 @@ type pedido struct {
 type PedidoRepo interface {
 	Insere(ctx context.Context, pedido *domain.PedidoDTO) (*domain.PedidoDTO, error)
 	PesquisaPorStatus(ctx context.Context, statuses []string) ([]*domain.PedidoDTO, error)
-	Atualiza(ctx context.Context, pedido *domain.PedidoDTO, id int64) error
+	PesquisaPorID(ctx context.Context, id int64) (*domain.PedidoDTO, error)
+	AtualizaStatus(ctx context.Context, status string, id int64) error
 }
 
 func NewPedidoRepo(connector DBConnector) PedidoRepo {
@@ -45,11 +46,25 @@ func (p *pedido) PesquisaPorStatus(ctx context.Context, statuses []string) ([]*d
 	return pedidos, nil
 }
 
-func (p *pedido) Atualiza(ctx context.Context, new *domain.PedidoDTO, id int64) error {
-	_, err := p.session.Context(ctx).ID(id).Update(new)
+func (p *pedido) AtualizaStatus(ctx context.Context, status string, id int64) error {
+	mapStatus := map[string]interface{}{"status": status}
+	_, err := p.session.Context(ctx).Where("pedido_id = ?", id).Update(mapStatus)
 	if err != nil {
 		return errorx.InternalError.New(err.Error())
 	}
 
 	return nil
+}
+
+func (p *pedido) PesquisaPorID(ctx context.Context, id int64) (*domain.PedidoDTO, error) {
+	dto := &domain.PedidoDTO{
+		Id: id,
+	}
+
+	_, err := p.session.Context(ctx).Get(dto)
+	if err != nil {
+		return nil, errorx.InternalError.New(err.Error())
+	}
+
+	return dto, nil
 }

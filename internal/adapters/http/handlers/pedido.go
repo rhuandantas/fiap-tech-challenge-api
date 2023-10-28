@@ -16,26 +16,32 @@ import (
 )
 
 type Pedido struct {
-	validator        util.Validator
-	listaPorStatusUC usecase.ListarPedidoPorStatus
-	cadastraPedidoUC usecase.CadastrarPedido
+	validator           util.Validator
+	listaPorStatusUC    usecase.ListarPedidoPorStatus
+	cadastraPedidoUC    usecase.CadastrarPedido
+	atualizaStatusUC    usecase.AtualizaStatusPedidoUC
+	pegaDetalhePedidoUC usecase.PegarDetalhePedido
 }
 
 func NewPedido(validator util.Validator,
 	listaPorStatusUC usecase.ListarPedidoPorStatus,
 	cadastraPedidoUC usecase.CadastrarPedido,
+	atualizaStatusUC usecase.AtualizaStatusPedidoUC,
+	pegaDetalhePedidoUC usecase.PegarDetalhePedido,
 ) *Pedido {
 	return &Pedido{
-		validator:        validator,
-		listaPorStatusUC: listaPorStatusUC,
-		cadastraPedidoUC: cadastraPedidoUC,
+		validator:           validator,
+		listaPorStatusUC:    listaPorStatusUC,
+		cadastraPedidoUC:    cadastraPedidoUC,
+		atualizaStatusUC:    atualizaStatusUC,
+		pegaDetalhePedidoUC: pegaDetalhePedidoUC,
 	}
 }
 
 func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 	server.POST("/pedido", h.cadastra)
 	server.GET("/pedidos/:statuses", h.listaPorStatus)
-	server.GET("/pedidos/detail/:id", h.listaPorStatus)
+	server.GET("/pedido/detail/:id", h.listaDetail)
 	server.PATCH("/pedido/:id", h.atualizaStatus)
 }
 
@@ -106,8 +112,8 @@ func (h *Pedido) atualizaStatus(ctx echo.Context) error {
 		status struct {
 			Status string `json:"status"`
 		}
-		//pedidoID int
-		err error
+		pedidoID int
+		err      error
 	)
 
 	if err = ctx.Bind(&status); err != nil {
@@ -115,11 +121,39 @@ func (h *Pedido) atualizaStatus(ctx echo.Context) error {
 	}
 
 	id := ctx.Param("id")
-	if _, err = strconv.Atoi(id); err != nil {
+	if pedidoID, err = strconv.Atoi(id); err != nil {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
 	}
 
-	// h.atualizaStatusUC.Atualiza(ctx.Request().Context(), status.Status)
+	err = h.atualizaStatusUC.Atualiza(ctx.Request().Context(), status.Status, int64(pedidoID))
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
 
 	return ctx.JSON(http.StatusOK, status)
+}
+
+// listaDetail godoc
+// @Summary lista detalhes do pedido
+// @Tags Pedido
+// @Produce json
+// @Param        id   path      integer  true  "id do pedido a ser lista"
+// @Success 200 {object} domain.Pedido
+// @Router /pedido/detail/{id} [get]
+func (h *Pedido) listaDetail(ctx echo.Context) error {
+	var (
+		pedidoID int
+		err      error
+	)
+
+	id := ctx.Param("id")
+	if pedidoID, err = strconv.Atoi(id); err != nil {
+		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
+	}
+
+	pedido, err := h.pegaDetalhePedidoUC.Pesquisa(ctx.Request().Context(), int64(pedidoID))
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
+	return ctx.JSON(http.StatusOK, pedido)
 }
