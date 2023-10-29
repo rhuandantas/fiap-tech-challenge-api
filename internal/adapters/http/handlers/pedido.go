@@ -21,6 +21,7 @@ type Pedido struct {
 	cadastraPedidoUC    usecase.CadastrarPedido
 	atualizaStatusUC    usecase.AtualizaStatusPedidoUC
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido
+	realizaCheckoutUC   usecase.RealizarCheckout
 }
 
 func NewPedido(validator util.Validator,
@@ -28,6 +29,7 @@ func NewPedido(validator util.Validator,
 	cadastraPedidoUC usecase.CadastrarPedido,
 	atualizaStatusUC usecase.AtualizaStatusPedidoUC,
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido,
+	realizaCheckoutUC usecase.RealizarCheckout,
 ) *Pedido {
 	return &Pedido{
 		validator:           validator,
@@ -35,6 +37,7 @@ func NewPedido(validator util.Validator,
 		cadastraPedidoUC:    cadastraPedidoUC,
 		atualizaStatusUC:    atualizaStatusUC,
 		pegaDetalhePedidoUC: pegaDetalhePedidoUC,
+		realizaCheckoutUC:   realizaCheckoutUC,
 	}
 }
 
@@ -43,6 +46,7 @@ func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 	server.GET("/pedidos/:statuses", h.listaPorStatus)
 	server.GET("/pedido/detail/:id", h.listaDetail)
 	server.PATCH("/pedido/:id", h.atualizaStatus)
+	server.PATCH("/pedido/checkout/:pedidoId", h.checkout)
 }
 
 // cadastra godoc
@@ -156,4 +160,30 @@ func (h *Pedido) listaDetail(ctx echo.Context) error {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 	return ctx.JSON(http.StatusOK, pedido)
+}
+
+// checkout godoc
+// @Summary checkout do pedido
+// @Tags Pedido
+// @Accept json
+// @Param        pedidoId   path      integer  true  "id do pedido a ser feito o checkout"
+// @Produce json
+// @Router /pedido/checkout/{pedidoId} [patch]
+func (h *Pedido) checkout(ctx echo.Context) error {
+	var (
+		pedidoID int
+		err      error
+	)
+
+	id := ctx.Param("pedidoId")
+	if pedidoID, err = strconv.Atoi(id); err != nil {
+		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
+	}
+
+	err = h.realizaCheckoutUC.FakeCheckout(ctx.Request().Context(), int64(pedidoID))
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
+
+	return ctx.NoContent(http.StatusOK)
 }

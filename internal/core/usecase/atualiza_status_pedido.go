@@ -10,7 +10,8 @@ type AtualizaStatusPedidoUC interface {
 }
 
 type atualizaStatusPedido struct {
-	repo repository.PedidoRepo
+	repo     repository.PedidoRepo
+	filaRepo repository.FilaRepo
 }
 
 func (uc atualizaStatusPedido) Atualiza(ctx context.Context, status string, id int64) error {
@@ -19,11 +20,16 @@ func (uc atualizaStatusPedido) Atualiza(ctx context.Context, status string, id i
 		return err
 	}
 
+	if err = uc.filaRepo.AtualizaStatus(ctx, status, id); err != nil {
+		return err
+	}
+
 	return uc.repo.AtualizaStatus(ctx, status, id)
 }
 
-func NewAtualizaStatusPedidoUC(repo repository.PedidoRepo) AtualizaStatusPedidoUC {
+func NewAtualizaStatusPedidoUC(repo repository.PedidoRepo, filaRepo repository.FilaRepo) AtualizaStatusPedidoUC {
 	return &atualizaStatusPedido{
-		repo: repo,
+		repo:     repo,
+		filaRepo: filaRepo,
 	}
 }

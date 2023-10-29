@@ -30,7 +30,7 @@ func NewPedidoRepo(connector DBConnector) PedidoRepo {
 }
 
 func (p *pedido) Insere(ctx context.Context, pedido *domain.PedidoDTO) (*domain.PedidoDTO, error) {
-	pedido.Status = domain.StatusRecebido
+	pedido.Status = domain.StatusAguardandoPagamento
 	if _, err := p.session.Context(ctx).Insert(pedido); err != nil {
 		return nil, err
 	}

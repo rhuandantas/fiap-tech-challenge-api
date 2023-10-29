@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fiap-tech-challenge-api/internal/adapters/repository"
+	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase/mapper"
 )
@@ -14,10 +15,27 @@ type CadastrarPedido interface {
 type cadastraPedido struct {
 	repo         repository.PedidoRepo
 	pedidoRepo   repository.PedidoProdutoRepo
+	clienteRepo  repository.ClienteRepo
+	prodRepo     repository.ProdutoRepo
+	filaRepo     repository.FilaRepo
 	mapperPedido mapper.Pedido
 }
 
 func (uc cadastraPedido) Cadastra(ctx context.Context, req *domain.PedidoRequest) (*domain.PedidoResponse, error) {
+	ids, err := uc.prodRepo.PesquisaPorIDS(ctx, req.ProdutoIds)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ids) != len(req.ProdutoIds) {
+		return nil, commons.BadRequest.New("pedido contém produto(s) inválido(s)")
+	}
+
+	_, err = uc.clienteRepo.PesquisaPorId(ctx, req.ClienteId)
+	if err != nil {
+		return nil, err
+	}
+
 	dto, err := uc.repo.Insere(ctx, uc.mapperPedido.MapReqToDTO(req))
 	if err != nil {
 		return nil, err
@@ -34,13 +52,25 @@ func (uc cadastraPedido) Cadastra(ctx context.Context, req *domain.PedidoRequest
 		return nil, err
 	}
 
+	if err = uc.filaRepo.Insere(ctx, &domain.Fila{
+		Status:     domain.StatusAguardandoPagamento,
+		PedidoId:   dto.Id,
+		Observacao: dto.Observacao,
+	}); err != nil {
+		return nil, err
+	}
+
 	return uc.mapperPedido.MapDTOToResponse(dto), err
 }
 
-func NewCadastraPedido(repo repository.PedidoRepo, pedidoRepo repository.PedidoProdutoRepo, mapperPedido mapper.Pedido) CadastrarPedido {
+func NewCadastraPedido(repo repository.PedidoRepo, pedidoRepo repository.PedidoProdutoRepo, mapperPedido mapper.Pedido, clienteRepo repository.ClienteRepo,
+	prodRepo repository.ProdutoRepo, filaRepo repository.FilaRepo) CadastrarPedido {
 	return &cadastraPedido{
 		repo:         repo,
 		mapperPedido: mapperPedido,
 		pedidoRepo:   pedidoRepo,
+		prodRepo:     prodRepo,
+		clienteRepo:  clienteRepo,
+		filaRepo:     filaRepo,
 	}
 }

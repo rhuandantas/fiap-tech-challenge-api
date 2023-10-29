@@ -12,7 +12,7 @@ import (
 
 var validStatusesSet = map[string]bool{
 	domain.StatusEmpreparacao: true,
-	domain.StatusFinalizada:   true,
+	domain.StatusFinalizado:   true,
 	domain.StatusPronto:       true,
 	domain.StatusRecebido:     true,
 }

@@ -5,10 +5,11 @@ import (
 )
 
 const (
-	StatusRecebido     string = "recebido"
-	StatusEmpreparacao string = "em_preparacao"
-	StatusPronto       string = "pronto"
-	StatusFinalizada   string = "finalizada"
+	StatusAguardandoPagamento string = "aguardando_pagamento"
+	StatusRecebido            string = "recebido"
+	StatusEmpreparacao        string = "em_preparacao"
+	StatusPronto              string = "pronto"
+	StatusFinalizado          string = "finalizado"
 )
 
 type PedidoRequest struct {
@@ -23,17 +24,10 @@ type PedidoDTO struct {
 	Cliente    *Cliente   `xorm:"-"`
 	Produtos   []*Produto `xorm:"-"`
 	ProdutoIDS string     `xorm:"'produtos'"`
-	Status     string
+	Status     string     `xorm:"'status'"`
 	Observacao string
 	CreatedAt  time.Time `xorm:"created"`
 	UpdatedAt  time.Time `xorm:"updated"`
-}
-
-type Produtos []Produto
-type PedidoDetails struct {
-	Pedido
-	Cliente
-	Produtos
 }
 
 type PedidoProduto struct {
@@ -61,10 +55,11 @@ type Pedido struct {
 	UpdatedAt  time.Time  `json:"updated"`
 }
 
-type Status struct {
-	Id        int64
-	PedidoId  int64     `xorm:"index"`
-	Status    string    `xorm:"status"`
-	CreatedAt time.Time `xorm:"created"`
-	UpdatedAt time.Time `xorm:"updated"`
+type Fila struct {
+	Id         int64
+	PedidoId   int64  `xorm:"index unique"`
+	Status     string `xorm:"status"`
+	Observacao string
+	CreatedAt  time.Time `xorm:"created"`
+	UpdatedAt  time.Time `xorm:"updated"`
 }
