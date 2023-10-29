@@ -130,6 +130,16 @@ paths:
       summary: atualiza o status do pedido
       tags:
       - Pedido
+  /pedido/checkout/{pedidoId}:
+    patch:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: checkout do pedido
+      tags:
+      - Pedido
   /pedido/detail/{id}:
     get:
       parameters:

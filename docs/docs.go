@@ -109,6 +109,21 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/pedido/checkout/{pedidoId}": {
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "checkout do pedido",
+                "responses": {}
+            }
+        },
         "/pedido/detail/{id}": {
             "get": {
                 "produces": [

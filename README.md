@@ -2,32 +2,26 @@
 
 ## Requirements
 
+### install libs
+```sh
+go install github.com/google/wire/cmd/wire@latest
+go install github.com/swaggo/swag/cmd/swag@latest
+go get -u github.com/swaggo/swag
+go get -u github.com/google/wire/cmd/wire
+```
+
 - Run swag to generate api documentation
 ```sh
 swag init
 ```
-- Run this command to generate dependency injection and mock test files
+- Run this command to generate dependency
 ```sh
-go generate ./...
+go generate ./... or wire ./...
 ```
-
-- set env vars
-```sh
-export AUTH_SECRET={your_secret}
-export DB_USER_PASS={db_password}
-export DB_USER_NAME={db_name}
-```
-- some application configurations can be set into ``resources/config.yml``
-- to build database (myqsl) container run ``docker-compose up -d``
 ---
 ### to run application
 ```sh
 go run .
-```
-
-### to run tests
-```sh
-ginkgo -v ./...
 ```
 
 ### to access swagger doc

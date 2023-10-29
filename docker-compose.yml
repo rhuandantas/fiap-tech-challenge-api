@@ -1,15 +1,22 @@
-version: '3.3'
+version: '3.9'
 services:
-  database:
-    image: mysql:5.7
+  app:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+  mysql:
+    image: mysql:8.0
     container_name: mysql
     restart: always
     environment:
-      MYSQL_DATABASE: 'verifymy'
+      MYSQL_DATABASE: 'tech_challenge'
       MYSQL_ROOT_PASSWORD: '12345678'
     ports:
-      - '3306:3306'
-    expose:
-      - '3306'
+      - "3306:3306"
     volumes:
-      - './.mysql-data/db:/var/lib/mysql'
+      - '/docker/db/data:/var/lib/mysql'
+      - '/docker/db/my.cnf:/etc/mysql/conf.d/my.cnf'
+      - '/docker/db/sql:/docker-entrypoint-initdb.d'
