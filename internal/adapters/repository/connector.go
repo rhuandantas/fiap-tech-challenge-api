@@ -36,10 +36,12 @@ func NewMySQLConnector() DBConnector {
 		dbName     = "tech_challenge"
 		dbPassword = "12345678"
 		dbUser     = "root"
+		dbPort     = "3306"
+		dbHost     = "mysql"
 		err        error
 	)
 
-	engine, err := xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s?charset=utf8", dbUser, dbPassword, dbName))
+	engine, err := xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", dbUser, dbPassword, dbHost, dbPort, dbName))
 	if err != nil {
 		panic(err)
 	}
@@ -62,14 +64,11 @@ func syncTables(engine *xorm.Engine) error {
 		new(domain.Produto),
 		new(domain.PedidoDTO),
 		new(domain.PedidoProduto),
-		new(domain.Status),
+		new(domain.Fila),
+		new(domain.Pagamento),
 	); err != nil {
 		return err
 	}
-
-	//if err := engine.CreateTables(domain.PedidoDTO{}); err != nil {
-	//	return err
-	//}
 
 	return nil
 }
