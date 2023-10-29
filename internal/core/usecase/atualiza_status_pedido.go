@@ -15,6 +15,10 @@ type atualizaStatusPedido struct {
 }
 
 func (uc atualizaStatusPedido) Atualiza(ctx context.Context, status string, id int64) error {
+	if err := ValidaStatuses([]string{status}); err != nil {
+		return err
+	}
+
 	_, err := uc.repo.PesquisaPorID(ctx, id)
 	if err != nil {
 		return err
