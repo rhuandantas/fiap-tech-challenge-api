@@ -2,7 +2,9 @@ package repository
 
 import (
 	"context"
+	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
+	"fmt"
 	"github.com/joomcode/errorx"
 	"xorm.io/xorm"
 )
@@ -47,8 +49,7 @@ func (p *pedido) PesquisaPorStatus(ctx context.Context, statuses []string) ([]*d
 }
 
 func (p *pedido) AtualizaStatus(ctx context.Context, status string, id int64) error {
-	mapStatus := map[string]interface{}{"status": status}
-	_, err := p.session.Context(ctx).Where("pedido_id = ?", id).Update(mapStatus)
+	_, err := p.session.Context(ctx).ID(id).Update(&domain.PedidoDTO{Status: status})
 	if err != nil {
 		return errorx.InternalError.New(err.Error())
 	}
@@ -61,9 +62,13 @@ func (p *pedido) PesquisaPorID(ctx context.Context, id int64) (*domain.PedidoDTO
 		Id: id,
 	}
 
-	_, err := p.session.Context(ctx).Get(dto)
+	has, err := p.session.Context(ctx).Get(dto)
 	if err != nil {
 		return nil, errorx.InternalError.New(err.Error())
+	}
+
+	if !has {
+		return nil, commons.BadRequest.New(fmt.Sprintf("pedido %d não existe", id))
 	}
 
 	return dto, nil
