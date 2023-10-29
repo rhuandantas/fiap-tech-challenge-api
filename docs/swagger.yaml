@@ -134,6 +134,12 @@ paths:
     patch:
       consumes:
       - application/json
+      parameters:
+      - description: id do pedido a ser feito o checkout
+        in: path
+        name: pedidoId
+        required: true
+        type: integer
       produces:
       - application/json
       responses: {}

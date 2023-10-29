@@ -121,6 +121,15 @@ const docTemplate = `{
                     "Pedido"
                 ],
                 "summary": "checkout do pedido",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id do pedido a ser feito o checkout",
+                        "name": "pedidoId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },
