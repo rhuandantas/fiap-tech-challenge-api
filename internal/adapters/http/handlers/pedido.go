@@ -52,6 +52,7 @@ func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 // cadastra godoc
 // @Summary cadastra um novo pedido
 // @Tags Pedido
+// @Param			pedido	body		domain.PedidoRequest	true	"cria pedido"
 // @Accept json
 // @Produce json
 // @Router /pedido [post]
@@ -81,7 +82,7 @@ func (h *Pedido) cadastra(ctx echo.Context) error {
 // @Summary lista pedido por status
 // @Tags Pedido
 // @Produce json
-// @Param        statuses   path      string  true  "status dos pedidos a ser pesquisado"
+// @Param        statuses   path      string  true  "status dos pedidos a ser pesquisado:(recebido, em_preparacao, pronto, finalizado)"
 // @Success 200 {array} domain.Pedido
 // @Router /pedidos/{statuses} [get]
 func (h *Pedido) listaPorStatus(ctx echo.Context) error {
@@ -109,6 +110,8 @@ func (h *Pedido) validatePedidoBody(p *domain.PedidoRequest) error {
 // @Summary atualiza o status do pedido
 // @Tags Pedido
 // @Accept json
+// @Param        id   path      integer  true  "id do pedido"
+// @Param        id   body      domain.StatusRequest  true  "status permitido: recebido, em_preparacao, pronto, finalizado"
 // @Produce json
 // @Router /pedido/{id} [patch]
 func (h *Pedido) atualizaStatus(ctx echo.Context) error {

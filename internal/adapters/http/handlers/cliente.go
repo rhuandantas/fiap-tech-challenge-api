@@ -35,6 +35,7 @@ func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 // @Tags Cliente
 // @Accept json
 // @Produce json
+// @Param			pedido	body		domain.ClienteRequest	true	"cria novo cliente"
 // @Success 200 {object} domain.Cliente
 // @Router /cliente [post]
 func (h *Cliente) cadastra(ctx echo.Context) error {

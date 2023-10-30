@@ -6,8 +6,6 @@ definitions:
         type: string
       created_at:
         type: string
-      data_aniversario:
-        type: string
       email:
         type: string
       id:
@@ -17,6 +15,20 @@ definitions:
       telefone:
         type: string
       updated_at:
+        type: string
+    required:
+    - cpf
+    - nome
+    type: object
+  domain.ClienteRequest:
+    properties:
+      cpf:
+        type: string
+      email:
+        type: string
+      nome:
+        type: string
+      telefone:
         type: string
     required:
     - cpf
@@ -41,6 +53,20 @@ definitions:
       updated:
         type: string
     type: object
+  domain.PedidoRequest:
+    properties:
+      cliente_id:
+        type: integer
+      observacao:
+        type: string
+      produtos:
+        items:
+          type: integer
+        type: array
+    required:
+    - cliente_id
+    - produtos
+    type: object
   domain.Produto:
     properties:
       categoria:
@@ -54,6 +80,23 @@ definitions:
       updated_at:
         type: string
     type: object
+  domain.ProdutoRequest:
+    properties:
+      categoria:
+        type: string
+      descricao:
+        type: string
+    required:
+    - categoria
+    - descricao
+    type: object
+  domain.StatusRequest:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -65,6 +108,13 @@ paths:
     post:
       consumes:
       - application/json
+      parameters:
+      - description: cria novo cliente
+        in: body
+        name: pedido
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ClienteRequest'
       produces:
       - application/json
       responses:
@@ -114,6 +164,13 @@ paths:
     post:
       consumes:
       - application/json
+      parameters:
+      - description: cria pedido
+        in: body
+        name: pedido
+        required: true
+        schema:
+          $ref: '#/definitions/domain.PedidoRequest'
       produces:
       - application/json
       responses: {}
@@ -124,6 +181,18 @@ paths:
     patch:
       consumes:
       - application/json
+      parameters:
+      - description: id do pedido
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'status permitido: recebido, em_preparacao, pronto, finalizado'
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.StatusRequest'
       produces:
       - application/json
       responses: {}
@@ -167,7 +236,8 @@ paths:
   /pedidos/{statuses}:
     get:
       parameters:
-      - description: status dos pedidos a ser pesquisado
+      - description: status dos pedidos a ser pesquisado:(recebido, em_preparacao,
+          pronto, finalizado)
         in: path
         name: statuses
         required: true
@@ -188,6 +258,13 @@ paths:
     post:
       consumes:
       - application/json
+      parameters:
+      - description: 'cria produto, categorias: bebida, lanche, acompanhamento'
+        in: body
+        name: produto
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ProdutoRequest'
       produces:
       - application/json
       responses:
@@ -196,15 +273,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.Produto'
       summary: cadastra um novo produto
-      tags:
-      - Produto
-    put:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses: {}
-      summary: atualiza um novo produto
       tags:
       - Produto
   /produto/{id}:
@@ -221,10 +289,31 @@ paths:
       summary: apaga produto por id
       tags:
       - Produto
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 'categorias: bebida, lanche, acompanhamento'
+        in: body
+        name: produto
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ProdutoRequest'
+      - description: atualiza produto pelo id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: atualiza um produto
+      tags:
+      - Produto
   /produtos/{categoria}:
     get:
       parameters:
-      - description: categoria do produto
+      - description: 'categorias: bebida, lanche, acompanhamento'
         in: path
         name: categoria
         required: true

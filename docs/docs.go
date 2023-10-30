@@ -30,6 +30,17 @@ const docTemplate = `{
                     "Cliente"
                 ],
                 "summary": "cadastra um novo cliente",
+                "parameters": [
+                    {
+                        "description": "cria novo cliente",
+                        "name": "pedido",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ClienteRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -106,6 +117,17 @@ const docTemplate = `{
                     "Pedido"
                 ],
                 "summary": "cadastra um novo pedido",
+                "parameters": [
+                    {
+                        "description": "cria pedido",
+                        "name": "pedido",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.PedidoRequest"
+                        }
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -173,6 +195,24 @@ const docTemplate = `{
                     "Pedido"
                 ],
                 "summary": "atualiza o status do pedido",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id do pedido",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "status permitido: recebido, em_preparacao, pronto, finalizado",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StatusRequest"
+                        }
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -188,7 +228,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "status dos pedidos a ser pesquisado",
+                        "description": "status dos pedidos a ser pesquisado:(recebido, em_preparacao, pronto, finalizado)",
                         "name": "statuses",
                         "in": "path",
                         "required": true
@@ -208,19 +248,6 @@ const docTemplate = `{
             }
         },
         "/produto": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Produto"
-                ],
-                "summary": "atualiza um novo produto",
-                "responses": {}
-            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -232,6 +259,17 @@ const docTemplate = `{
                     "Produto"
                 ],
                 "summary": "cadastra um novo produto",
+                "parameters": [
+                    {
+                        "description": "cria produto, categorias: bebida, lanche, acompanhamento",
+                        "name": "produto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProdutoRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -243,6 +281,37 @@ const docTemplate = `{
             }
         },
         "/produto/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Produto"
+                ],
+                "summary": "atualiza um produto",
+                "parameters": [
+                    {
+                        "description": "categorias: bebida, lanche, acompanhamento",
+                        "name": "produto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProdutoRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "atualiza produto pelo id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
             "delete": {
                 "produces": [
                     "application/json"
@@ -275,7 +344,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "categoria do produto",
+                        "description": "categorias: bebida, lanche, acompanhamento",
                         "name": "categoria",
                         "in": "path",
                         "required": true
@@ -332,9 +401,6 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
-                "data_aniversario": {
-                    "type": "string"
-                },
                 "email": {
                     "type": "string"
                 },
@@ -348,6 +414,27 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ClienteRequest": {
+            "type": "object",
+            "required": [
+                "cpf",
+                "nome"
+            ],
+            "properties": {
+                "cpf": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "telefone": {
                     "type": "string"
                 }
             }
@@ -381,6 +468,27 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.PedidoRequest": {
+            "type": "object",
+            "required": [
+                "cliente_id",
+                "produtos"
+            ],
+            "properties": {
+                "cliente_id": {
+                    "type": "integer"
+                },
+                "observacao": {
+                    "type": "string"
+                },
+                "produtos": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
         "domain.Produto": {
             "type": "object",
             "properties": {
@@ -397,6 +505,32 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ProdutoRequest": {
+            "type": "object",
+            "required": [
+                "categoria",
+                "descricao"
+            ],
+            "properties": {
+                "categoria": {
+                    "type": "string"
+                },
+                "descricao": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.StatusRequest": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
                     "type": "string"
                 }
             }

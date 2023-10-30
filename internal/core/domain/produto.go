@@ -12,6 +12,11 @@ const (
 	CategoriaAcompanhamento = "acompanhamento"
 )
 
+type ProdutoRequest struct {
+	Descricao string `json:"descricao" validate:"required"`
+	Categoria string `json:"categoria" validate:"required"`
+}
+
 type Produto struct {
 	Id        int64     `json:"id" xorm:"pk autoincr 'produto_id'"`
 	Descricao string    `json:"descricao" xorm:"unique"`

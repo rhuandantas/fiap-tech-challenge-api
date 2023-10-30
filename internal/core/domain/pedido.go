@@ -63,3 +63,7 @@ type Fila struct {
 	CreatedAt  time.Time `xorm:"created"`
 	UpdatedAt  time.Time `xorm:"updated"`
 }
+
+type StatusRequest struct {
+	Status string `json:"status" validate:"required"`
+}

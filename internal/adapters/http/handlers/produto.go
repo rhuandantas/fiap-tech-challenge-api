@@ -49,6 +49,7 @@ func (h *Produto) RegistraRotasProduto(server *echo.Echo) {
 // @Tags Produto
 // @Accept json
 // @Produce json
+// @Param produto body domain.ProdutoRequest true "cria produto, categorias: bebida, lanche, acompanhamento"
 // @Success 200 {object} domain.Produto
 // @Router /produto [post]
 func (h *Produto) cadastra(ctx echo.Context) error {
@@ -77,7 +78,7 @@ func (h *Produto) cadastra(ctx echo.Context) error {
 // @Summary pega produtos por categoria
 // @Tags Produto
 // @Produce json
-// @Param        categoria   path      string  true  "categoria do produto"
+// @Param        categoria   path      string  true  "categorias: bebida, lanche, acompanhamento"
 // @Success 200 {array} domain.Produto
 // @Router /produtos/{categoria} [get]
 func (h *Produto) listaPorCategoria(ctx echo.Context) error {
@@ -136,11 +137,13 @@ func (h *Produto) apaga(ctx echo.Context) error {
 }
 
 // atualiza godoc
-// @Summary atualiza um novo produto
+// @Summary atualiza um produto
 // @Tags Produto
 // @Accept json
+// @Param produto body domain.ProdutoRequest true "categorias: bebida, lanche, acompanhamento"
+// @Param id path integer true "atualiza produto pelo id"
 // @Produce json
-// @Router /produto [put]
+// @Router /produto/{id} [put]
 func (h *Produto) atualiza(ctx echo.Context) error {
 	var (
 		produto   domain.Produto
@@ -166,5 +169,5 @@ func (h *Produto) atualiza(ctx echo.Context) error {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 
-	return ctx.JSON(http.StatusOK, nil)
+	return ctx.NoContent(http.StatusOK)
 }
