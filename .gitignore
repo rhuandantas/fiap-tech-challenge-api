@@ -20,6 +20,5 @@
 # Go workspace file
 go.work
 .idea
-wire_gen.go
 /test/mock/
 api
