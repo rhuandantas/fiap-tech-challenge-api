@@ -12,15 +12,12 @@ const (
 )
 
 type PedidoRequest struct {
-	ClienteId  int64   `json:"cliente_id" validate:"required"`
 	ProdutoIds []int64 `json:"produtos" validate:"required"`
 	Observacao string  `json:"observacao"`
 }
 
 type PedidoDTO struct {
 	Id         int64      `xorm:"pk autoincr 'pedido_id'"`
-	ClienteId  int64      `xorm:"index"`
-	Cliente    *Cliente   `xorm:"-"`
 	Produtos   []*Produto `xorm:"-"`
 	ProdutoIDS string     `xorm:"'produtos'"`
 	Status     string     `xorm:"'status'"`
@@ -47,7 +44,6 @@ type PedidoResponse struct {
 type Pedido struct {
 	Id         int64      `json:"id"`
 	Status     string     `json:"status"`
-	Cliente    *Cliente   `json:"cliente,omitempty"`
 	Produtos   []*Produto `json:"produtos,omitempty"`
 	Observacao string     `json:"observacao"`
 	CreatedAt  time.Time  `json:"created_at"`

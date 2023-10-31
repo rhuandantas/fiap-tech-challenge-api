@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  commons.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
   domain.Cliente:
     properties:
       cpf:
@@ -18,7 +23,6 @@ definitions:
         type: string
     required:
     - cpf
-    - nome
     type: object
   domain.ClienteRequest:
     properties:
@@ -36,8 +40,6 @@ definitions:
     type: object
   domain.Pedido:
     properties:
-      cliente:
-        $ref: '#/definitions/domain.Cliente'
       created_at:
         type: string
       id:
@@ -55,8 +57,6 @@ definitions:
     type: object
   domain.PedidoRequest:
     properties:
-      cliente_id:
-        type: integer
       observacao:
         type: string
       produtos:
@@ -64,7 +64,6 @@ definitions:
           type: integer
         type: array
     required:
-    - cliente_id
     - produtos
     type: object
   domain.Produto:
@@ -211,7 +210,11 @@ paths:
         type: integer
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/commons.MessageResponse'
       summary: checkout do pedido
       tags:
       - Pedido

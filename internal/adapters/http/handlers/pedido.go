@@ -7,10 +7,11 @@ import (
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
 	"fmt"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/labstack/echo/v4"
 
 	"github.com/joomcode/errorx"
 )
@@ -169,6 +170,7 @@ func (h *Pedido) listaDetail(ctx echo.Context) error {
 // @Summary checkout do pedido
 // @Tags Pedido
 // @Accept json
+// @Success 200 {object} commons.MessageResponse
 // @Param        pedidoId   path      integer  true  "id do pedido a ser feito o checkout"
 // @Produce json
 // @Router /pedido/checkout/{pedidoId} [patch]
@@ -188,5 +190,5 @@ func (h *Pedido) checkout(ctx echo.Context) error {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 
-	return ctx.NoContent(http.StatusOK)
+	return ctx.JSON(http.StatusOK, commons.MessageResponse{Message: "checkout realizado com sucesso"})
 }

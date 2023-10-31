@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fiap-tech-challenge-api/internal/core/commons"
-	"github.com/paemuri/brdoc"
 	"time"
 	"unicode"
+
+	"github.com/paemuri/brdoc"
 )
 
 type ClienteRequest struct {

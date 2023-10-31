@@ -31,11 +31,6 @@ func (uc cadastraPedido) Cadastra(ctx context.Context, req *domain.PedidoRequest
 		return nil, commons.BadRequest.New("pedido contém produto(s) inválido(s)")
 	}
 
-	_, err = uc.clienteRepo.PesquisaPorId(ctx, req.ClienteId)
-	if err != nil {
-		return nil, err
-	}
-
 	dto, err := uc.repo.Insere(ctx, uc.mapperPedido.MapReqToDTO(req))
 	if err != nil {
 		return nil, err

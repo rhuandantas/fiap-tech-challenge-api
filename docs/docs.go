@@ -152,7 +152,14 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/commons.MessageResponse"
+                        }
+                    }
+                }
             }
         },
         "/pedido/detail/{id}": {
@@ -388,11 +395,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "commons.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.Cliente": {
             "type": "object",
             "required": [
-                "cpf",
-                "nome"
+                "cpf"
             ],
             "properties": {
                 "cpf": {
@@ -442,9 +456,6 @@ const docTemplate = `{
         "domain.Pedido": {
             "type": "object",
             "properties": {
-                "cliente": {
-                    "$ref": "#/definitions/domain.Cliente"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -471,13 +482,9 @@ const docTemplate = `{
         "domain.PedidoRequest": {
             "type": "object",
             "required": [
-                "cliente_id",
                 "produtos"
             ],
             "properties": {
-                "cliente_id": {
-                    "type": "integer"
-                },
                 "observacao": {
                     "type": "string"
                 },

@@ -38,13 +38,6 @@ func (uc *pegaDetalhePedido) Pesquisa(ctx context.Context, id int64) (*domain.Pe
 
 	dto.Produtos = produtos
 
-	cliente, err := uc.repoCli.PesquisaPorId(ctx, dto.ClienteId)
-	if err != nil {
-		return nil, err
-	}
-
-	dto.Cliente = cliente
-
 	return uc.mapperPedido.MapDTOToResponse(dto), nil
 }
 
