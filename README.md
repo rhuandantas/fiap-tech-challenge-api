@@ -39,3 +39,14 @@ go install github.com/swaggo/swag/cmd/swag@latest
 go get -u github.com/swaggo/swag
 go get -u github.com/google/wire/cmd/wire
 ```
+
+### to update swagger files
+```
+swag init
+```
+
+### to update dependency injection file
+```
+delete wire_gen.go
+go generate ./...
+```
