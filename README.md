@@ -1,5 +1,32 @@
 # fiap-tech-challenge-api
 
+### Passos para homologação dos professores da Fiap
+
+1. Faça o git clone do projeto:
+```
+git clone https://github.com/rhuandantas/fiap-tech-challenge-api.git
+```
+
+2. Cadastre a pasta /docker no File Sharing de seu Docker local.
+
+3. Execute o seguinte comando na raiz do projeto:
+```
+docker-compose up --build
+```
+
+4. Importe as collections do Insomnia que estão no link abaixo:
+
+https://github.com/rhuandantas/fiap-tech-challenge-api/blob/main/docs/insomnia_collection
+
+Obs: Somente os status abaixo são válidos para executar os endpoints: atualiza status e lista por status:
+
+1. "recebido"
+2. "em_preparacao"
+3. "pronto"
+4. "finalizado"
+
+---
+
 ### this go application needs go version 1.20 or later
 
 ---
