@@ -5,6 +5,7 @@ import (
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fmt"
+
 	"github.com/joomcode/errorx"
 	"xorm.io/xorm"
 )
@@ -30,7 +31,7 @@ func NewPedidoRepo(connector DBConnector) PedidoRepo {
 }
 
 func (p *pedido) Insere(ctx context.Context, pedido *domain.PedidoDTO) (*domain.PedidoDTO, error) {
-	pedido.Status = domain.StatusAguardandoPagamento
+	pedido.Status = domain.StatusRecebido
 	if _, err := p.session.Context(ctx).Insert(pedido); err != nil {
 		return nil, err
 	}

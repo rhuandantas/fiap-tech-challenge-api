@@ -4,6 +4,7 @@ import (
 	"context"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
+
 	"xorm.io/xorm"
 )
 
@@ -30,7 +31,7 @@ func (r *cliente) Insere(ctx context.Context, cliente *domain.Cliente) (*domain.
 	_, err := r.session.Context(ctx).Insert(cliente)
 	if err != nil {
 		if commons.IsDuplicatedEntryError(err) {
-			return nil, commons.BadRequest.New("client já existe")
+			return nil, commons.BadRequest.New("cliente já existe")
 		}
 
 		return nil, err

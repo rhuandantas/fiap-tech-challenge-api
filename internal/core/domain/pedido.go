@@ -5,11 +5,10 @@ import (
 )
 
 const (
-	StatusAguardandoPagamento string = "aguardando_pagamento"
-	StatusRecebido            string = "recebido"
-	StatusEmpreparacao        string = "em_preparacao"
-	StatusPronto              string = "pronto"
-	StatusFinalizado          string = "finalizado"
+	StatusRecebido     string = "recebido"
+	StatusEmpreparacao string = "em_preparacao"
+	StatusPronto       string = "pronto"
+	StatusFinalizado   string = "finalizado"
 )
 
 type PedidoRequest struct {
