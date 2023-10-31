@@ -3,6 +3,7 @@ package repository
 import (
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fmt"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/gommon/log"
@@ -33,13 +34,22 @@ func (m MySQLConnector) Close() {
 func NewMySQLConnector() DBConnector {
 	// TODO put in env vars
 	var (
-		dbName     = "tech_challenge"
-		dbPassword = "12345678"
-		dbUser     = "root"
-		dbPort     = "3306"
-		dbHost     = "mysql"
+		dbName     string
+		dbPassword string
+		dbUser     string
+		dbPort     string
+		dbHost     string
 		err        error
 	)
+
+	dbHost = os.Getenv("DB_HOST")
+	dbPassword = os.Getenv("DB_PASS")
+	dbName = os.Getenv("DB_NAME")
+	dbUser = os.Getenv("DB_USER")
+	dbPort = os.Getenv("DB_PORT")
+	if dbHost == "" || dbPassword == "" || dbName == "" || dbUser == "" || dbPort == "" {
+		log.Fatal("make sure your db variable are configured properly")
+	}
 
 	engine, err := xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", dbUser, dbPassword, dbHost, dbPort, dbName))
 	if err != nil {
