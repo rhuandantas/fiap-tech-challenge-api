@@ -1,5 +1,45 @@
 # fiap-tech-challenge-api
 
+### Tech Challenge 2:
+### Passos para homologação dos professores da Fiap
+
+1. Instale a CLI do GCloud através das instruções do link a abaixo:
+```
+https://cloud.google.com/sdk/docs/install?hl=pt-br
+```
+
+2. Definar o projeto no GCP em que vai atuar:
+```
+gcloud config set project PROJECT_ID
+```
+
+3. Faça a autenticação e configure o docker:
+```
+sudo usermod -a -G docker ${USER}
+
+gcloud auth login
+
+gcloud auth configure-docker
+```
+
+Obs: Caso você execute o docker com o sudo, é necessário executar os comandos acima com o sudo também.
+
+4. Execute os seguintes comandos abaixo para subir uma imagem da api no Container Registry do GCP:
+```
+
+docker build -t fiap-tech-challenge-api .
+
+docker tag fiap-tech-challenge-api gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+
+docker push gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+
+```
+
+Passo a passo em construção...
+
+
+
+### Tech Challenge 1:
 ### Passos para homologação dos professores da Fiap
 
 1. Faça o git clone do projeto:

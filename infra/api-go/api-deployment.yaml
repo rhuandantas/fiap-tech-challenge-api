@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  template:
+    metadata:
+      name: api
+      labels: 
+        app: api
+    spec:
+      containers:
+        - name: api-container
+          image: gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+          resources:
+            limits:
+              cpu: "0.3"
+              memory: "512Mi"          
+            requests:
+              cpu: "0.3"
+              memory: "512Mi"
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: api-configmap
+          livenessProbe:
+            httpGet:
+              path: /liveness
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 3
+            initialDelaySeconds: 20
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api          
+
