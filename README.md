@@ -35,6 +35,8 @@ docker push gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
 
 ```
 
+kubectl get hpa --watch
+
 Passo a passo em construção...
 
 
