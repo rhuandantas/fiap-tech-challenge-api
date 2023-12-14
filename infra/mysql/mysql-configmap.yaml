@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-configmap
-data:
-  MYSQL_ROOT_PASSWORD: 123mudar
-  MYSQL_DATABASE: tech_challenge
-  MYSQL_PASSWORD: 123mudar
-  
