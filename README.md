@@ -16,7 +16,7 @@ https://cloud.google.com/sdk/docs/install?hl=pt-br
 
 4. Definar o projeto no GCP em que vai atuar:
 ```
-//gcloud config set project PROJECT_ID
+# gcloud config set project PROJECT_ID
 gcloud config set project fiap-pos-tech-arquitetura
 ```
 
@@ -96,6 +96,8 @@ Caso a coluna "TARGETS" esteja com um valor de "<unknown>/80%", então o mesmo a
 
 
 A verficação de um endpoint com este valor seria assim por exemplo: http://34.41.255.86:3000/liveness
+
+
 Passo a passo em construção...
 
 
