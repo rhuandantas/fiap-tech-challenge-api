@@ -22,8 +22,8 @@ spec:
           ports:
             - containerPort: 3000
           envFrom:
-            - configMapRef:
-                name: api-configmap
+            - secretRef:
+                name: secrets
           livenessProbe:
             httpGet:
               path: /liveness

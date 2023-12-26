@@ -64,6 +64,8 @@ unzip infra.zip
 ```
 
 
+kubectl get hpa --watch
+
 Passo a passo em construção...
 
 
