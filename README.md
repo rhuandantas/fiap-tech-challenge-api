@@ -60,12 +60,42 @@ docker push gcr.io/fiap-pos-tech-arquitetura/fiap-tech-challenge-api:latest
 ```
 unzip infra.zip
 
+cd infra/
 
+kubectl apply -f secrets.yaml
+
+cd metrics-server/
+
+# Metrics server downloaded from https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl apply -f components.yaml
+
+cd ../mysql/
+
+kubectl apply -f mysql-pv.yaml
+
+kubectl apply -f mysql-svc.yaml
+
+kubectl apply -f mysql-deployment.yaml
+
+cd ../api-go/
+
+kubectl apply -f api-hpa.yaml
+
+kubectl apply -f api-svc.yaml
+
+kubectl apply -f api-deployment.yaml
 ```
 
-
+14. O servidor de métricas pode levar de 5 minutos ou até mais para começar a coletar as métricas corretamente, para verificar se o mesmo já está funcionando execute o comando abaixo:
+```
 kubectl get hpa --watch
+```
+Caso a coluna "TARGETS" esteja com um valor de "<unknown>/80%", então o mesmo ainda não está funcionando, quando começar a aparecer algum número antes do /80%, por exemplo assim "0%/80%", então o mesmo começou a funcionar;
 
+15. De volta a interface do GCP, vá até o menu "Kubernetes Engine->Gateways, Services & Ingress" e copie o valor da coluna "Endpoints" da linha com o nome "api-svc", o valor copiado será algo semelhante a "http://34.41.255.86:3000/";
+
+
+A verficação de um endpoint com este valor seria assim por exemplo: http://34.41.255.86:3000/liveness
 Passo a passo em construção...
 
 
