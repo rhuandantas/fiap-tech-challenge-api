@@ -3,17 +3,24 @@
 ### Tech Challenge 2:
 ### Passos para homologação dos professores da Fiap
 
-1. Instale a CLI do GCloud através das instruções do link a abaixo:
+Foi utilizado o Ubuntu como sistema operacional no passo a passo abaixo, além disso, o computador estava com o docker instalado:
+
+1. Crie uma conta e um projeto na plataforma do Google Cloud Platform (GCP), como exemplo neste passo a passo vamos supor que o nome do projeto criado é "fiap-pos-tech-arquitetura";
+
+2. Ative o Container Registry no GCP;
+
+3. Instale a CLI do GCloud através das instruções do link a abaixo:
 ```
 https://cloud.google.com/sdk/docs/install?hl=pt-br
 ```
 
-2. Definar o projeto no GCP em que vai atuar:
+4. Definar o projeto no GCP em que vai atuar:
 ```
-gcloud config set project PROJECT_ID
+//gcloud config set project PROJECT_ID
+gcloud config set project fiap-pos-tech-arquitetura
 ```
 
-3. Faça a autenticação e configure o docker:
+5. Faça a autenticação e configure o docker:
 ```
 sudo usermod -a -G docker ${USER}
 
@@ -24,16 +31,38 @@ gcloud auth configure-docker
 
 Obs: Caso você execute o docker com o sudo, é necessário executar os comandos acima com o sudo também.
 
-4. Execute os seguintes comandos abaixo para subir uma imagem da api no Container Registry do GCP:
+6. Execute os seguintes comandos abaixo na raiz do projeto para subir uma imagem da api no Container Registry do GCP, considere que no exemplo o nome da imagem será "fiap-tech-challenge-api":
 ```
 
 docker build -t fiap-tech-challenge-api .
 
-docker tag fiap-tech-challenge-api gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+docker tag fiap-tech-challenge-api gcr.io/fiap-pos-tech-arquitetura/fiap-tech-challenge-api:latest
 
-docker push gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+docker push gcr.io/fiap-pos-tech-arquitetura/fiap-tech-challenge-api:latest
 
 ```
+
+7. Após isso, no GCP ative o Kubernetes Engine API, este passo poderá levar alguns minutos;
+
+8. Após isso vá até a tela de Clusters no menu "Kubernetes Engine->Clusters" e clique em "CREATE", caso a tela de criação de cluster autopilot seja aberta, clique no botão superior direiro com o label "switch to standard cluster", é necessário que seja criado um cluster standard pois o servidor de métricas usado pelo HPA não funcionará em um cluster autopilot. Neste passo a passo, um cluster com as configurações padrões já serão suficiente. Após o procedimento de criação do cluster ser finalizado por você, o GCP poderá levar alguns minutos para finalizar;
+
+9. Após o GCP terminar de criar o cluster, clique sobre o nome do mesmo, e na tela que se abrir clique no botão no topo da página chamado "CONNECT", um modal irá se abrir, para facilitar a conexão com o cluster e não termos problemas na instalação de algumas bibliotecas na máquina local, clique em "RUN IN CLOUD SHELL";
+
+10. Será aberto no rodapé uma janela que se assemelha a um terminal, após o comando de conexão com o cluster aparecer automaticamente, apenas clique em "ENTER", uma janela de confirmação com o título "Authorize Cloud Shell" irá aparecer, apenas confirme clicando em "AUTHORIZE";
+
+11. Voltando ao projeto, altere o nome da imagem no arquivo infra/api-go/api-deployment.yaml para o nome da imagem que você subiu no Container Registry
+
+11. Crie um arquivo .zip da pasta chamada "infra" deste projeto, o nome do arquivo deverá ficar como "infra.zip";
+
+12. De volta ao terminal do Cloud Shell do GCP, clique no ícone de três pontos no canto superior direito do mesmo e depois na opção "UPLOAD", faça o upload do arquivo infra.zip que acabou de criar;
+
+13. Ainda no Cloud Shell, execute a seguinte sequência de comandos abaixo:
+```
+unzip infra.zip
+
+
+```
+
 
 Passo a passo em construção...
 

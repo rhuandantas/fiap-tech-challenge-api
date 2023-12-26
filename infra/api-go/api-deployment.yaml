@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: api-container
-          image: gcr.io/pos-tech-arquitetura/fiap-tech-challenge-api:latest
+          image: gcr.io/project pos-tech-arquitetura-2/fiap-tech-challenge-api:latest
           resources:
             limits:
               cpu: "0.3"
