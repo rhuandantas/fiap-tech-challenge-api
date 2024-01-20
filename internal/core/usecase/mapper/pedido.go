@@ -35,6 +35,7 @@ func (p pedido) MapReqToDTO(req *domain.PedidoRequest) *domain.PedidoDTO {
 		ids[i] = fmt.Sprint(id)
 	}
 	return &domain.PedidoDTO{
+		ClienteId:  req.ClienteId,
 		Observacao: req.Observacao,
 		ProdutoIDS: strings.Join(ids, ","),
 	}
@@ -50,6 +51,7 @@ func (p pedido) MapDTOToModels(req []*domain.PedidoDTO) []*domain.Pedido {
 	for i, dto := range req {
 		pedidos[i] = &domain.Pedido{
 			Id:         dto.Id,
+			ClienteId:  dto.ClienteId,
 			Status:     dto.Status,
 			Produtos:   dto.Produtos,
 			Observacao: dto.Observacao,

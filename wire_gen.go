@@ -34,13 +34,14 @@ func InitializeWebServer() (*http.Server, error) {
 	pedidoRepo := repository.NewPedidoRepo(dbConnector)
 	pedido := mapper.NewPedidoMapper()
 	listarPedidoPorStatus := usecase.NewListaPedidoPorStatus(pedidoRepo, pedido)
+	listarTodosPedidos := usecase.NewListaTodosPedidos(pedidoRepo, pedido)
 	pedidoProdutoRepo := repository.NewPedidoProdutoRepo(dbConnector)
 	filaRepo := repository.NewFilaRepo(dbConnector)
 	cadastrarPedido := usecase.NewCadastraPedido(pedidoRepo, pedidoProdutoRepo, pedido, clienteRepo, produtoRepo, filaRepo)
 	atualizaStatusPedidoUC := usecase.NewAtualizaStatusPedidoUC(pedidoRepo, filaRepo)
 	pegarDetalhePedido := usecase.NewPegaDetalhePedido(pedidoRepo, pedidoProdutoRepo, produtoRepo, clienteRepo, pedido)
 	realizarCheckout := usecase.NewRealizaCheckout(pedidoRepo, filaRepo)
-	handlersPedido := handlers.NewPedido(validator, listarPedidoPorStatus, cadastrarPedido, atualizaStatusPedidoUC, pegarDetalhePedido, realizarCheckout)
+	handlersPedido := handlers.NewPedido(validator, listarPedidoPorStatus, listarTodosPedidos, cadastrarPedido, atualizaStatusPedidoUC, pegarDetalhePedido, realizarCheckout)
 	server := http.NewAPIServer(healthCheck, cliente, produto, handlersPedido)
 	return server, nil
 }

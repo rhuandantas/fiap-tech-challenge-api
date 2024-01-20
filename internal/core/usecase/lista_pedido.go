@@ -7,11 +7,12 @@ import (
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase/mapper"
 	"fmt"
+	"sort"
 	"strings"
 )
 
 var validStatusesSet = map[string]bool{
-	domain.StatusEmpreparacao: true,
+	domain.StatusEmPreparacao: true,
 	domain.StatusFinalizado:   true,
 	domain.StatusPronto:       true,
 	domain.StatusRecebido:     true,
@@ -25,12 +26,16 @@ type ListarPedidoPorStatus interface {
 	ListaPorStatus(ctx context.Context, statuses []string) ([]*domain.Pedido, error)
 }
 
-type listaPedidoPorStatus struct {
+type listaPedido struct {
 	repo         repository.PedidoRepo
 	mapperPedido mapper.Pedido
 }
 
-func (uc *listaPedidoPorStatus) ListaPorStatus(ctx context.Context, statuses []string) ([]*domain.Pedido, error) {
+type ListarTodosPedidos interface {
+	ListaTodos(ctx context.Context) ([]*domain.Pedido, error)
+}
+
+func (uc *listaPedido) ListaPorStatus(ctx context.Context, statuses []string) ([]*domain.Pedido, error) {
 	if err := ValidaStatuses(statuses); err != nil {
 		return nil, err
 	}
@@ -43,7 +48,7 @@ func (uc *listaPedidoPorStatus) ListaPorStatus(ctx context.Context, statuses []s
 }
 
 func NewListaPedidoPorStatus(repo repository.PedidoRepo, mapperPedido mapper.Pedido) ListarPedidoPorStatus {
-	return &listaPedidoPorStatus{
+	return &listaPedido{
 		repo:         repo,
 		mapperPedido: mapperPedido,
 	}
@@ -57,4 +62,23 @@ func ValidaStatuses(statuses []string) error {
 	}
 
 	return nil
+}
+
+func (uc *listaPedido) ListaTodos(ctx context.Context) ([]*domain.Pedido, error) {
+	pedidos, err := uc.repo.PesquisaTodos(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Sort(domain.PedidosDTO(pedidos))
+
+	return uc.mapperPedido.MapDTOToModels(pedidos), nil
+}
+
+func NewListaTodosPedidos(repo repository.PedidoRepo, mapperPedido mapper.Pedido) ListarTodosPedidos {
+	return &listaPedido{
+		repo:         repo,
+		mapperPedido: mapperPedido,
+	}
 }

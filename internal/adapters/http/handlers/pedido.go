@@ -19,6 +19,7 @@ import (
 type Pedido struct {
 	validator           util.Validator
 	listaPorStatusUC    usecase.ListarPedidoPorStatus
+	listaTodosUC        usecase.ListarTodosPedidos
 	cadastraPedidoUC    usecase.CadastrarPedido
 	atualizaStatusUC    usecase.AtualizaStatusPedidoUC
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido
@@ -27,6 +28,7 @@ type Pedido struct {
 
 func NewPedido(validator util.Validator,
 	listaPorStatusUC usecase.ListarPedidoPorStatus,
+	listaTodosUC usecase.ListarTodosPedidos,
 	cadastraPedidoUC usecase.CadastrarPedido,
 	atualizaStatusUC usecase.AtualizaStatusPedidoUC,
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido,
@@ -35,6 +37,7 @@ func NewPedido(validator util.Validator,
 	return &Pedido{
 		validator:           validator,
 		listaPorStatusUC:    listaPorStatusUC,
+		listaTodosUC:        listaTodosUC,
 		cadastraPedidoUC:    cadastraPedidoUC,
 		atualizaStatusUC:    atualizaStatusUC,
 		pegaDetalhePedidoUC: pegaDetalhePedidoUC,
@@ -45,6 +48,7 @@ func NewPedido(validator util.Validator,
 func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 	server.POST("/pedido", h.cadastra)
 	server.GET("/pedidos/:statuses", h.listaPorStatus)
+	server.GET("/pedidos", h.listaTodos)
 	server.GET("/pedido/detail/:id", h.listaDetail)
 	server.PATCH("/pedido/:id", h.atualizaStatus)
 	server.PATCH("/pedido/checkout/:pedidoId", h.checkout)
@@ -191,4 +195,19 @@ func (h *Pedido) checkout(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, commons.MessageResponse{Message: "checkout realizado com sucesso"})
+}
+
+// listaTodos godoc
+// @Summary lista todos os pedidos
+// @Tags Pedido
+// @Produce json
+// @Success 200 {array} domain.Pedido
+// @Router /pedidos [get]
+func (h *Pedido) listaTodos(ctx echo.Context) error {
+
+	pedidos, err := h.listaTodosUC.ListaTodos(ctx.Request().Context())
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
+	return ctx.JSON(http.StatusOK, pedidos)
 }

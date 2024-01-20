@@ -23,6 +23,7 @@ definitions:
         type: string
     required:
     - cpf
+    - nome
     type: object
   domain.ClienteRequest:
     properties:
@@ -40,6 +41,8 @@ definitions:
     type: object
   domain.Pedido:
     properties:
+      cliente_id:
+        type: integer
       created_at:
         type: string
       id:
@@ -52,11 +55,13 @@ definitions:
         type: array
       status:
         type: string
-      updated:
+      updated_at:
         type: string
     type: object
   domain.PedidoRequest:
     properties:
+      cliente_id:
+        type: integer
       observacao:
         type: string
       produtos:
@@ -64,6 +69,7 @@ definitions:
           type: integer
         type: array
     required:
+    - cliente_id
     - produtos
     type: object
   domain.Produto:
@@ -234,6 +240,20 @@ paths:
           schema:
             $ref: '#/definitions/domain.Pedido'
       summary: lista detalhes do pedido
+      tags:
+      - Pedido
+  /pedidos:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Pedido'
+            type: array
+      summary: lista todos os pedidos
       tags:
       - Pedido
   /pedidos/{statuses}:
