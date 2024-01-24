@@ -30,6 +30,7 @@ func InitializeWebServer() (*http.Server, error) {
 		usecase.NewApagaProduto,
 		usecase.NewAtualizaProduto,
 		usecase.NewListaPedidoPorStatus,
+		usecase.NewListaTodosPedidos,
 		usecase.NewCadastraPedido,
 		usecase.NewAtualizaStatusPedidoUC,
 		usecase.NewPegaDetalhePedido,

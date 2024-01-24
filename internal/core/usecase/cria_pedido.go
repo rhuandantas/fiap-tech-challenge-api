@@ -22,6 +22,12 @@ type cadastraPedido struct {
 }
 
 func (uc cadastraPedido) Cadastra(ctx context.Context, req *domain.PedidoRequest) (*domain.PedidoResponse, error) {
+	_, err := uc.clienteRepo.PesquisaPorId(ctx, req.ClienteId)
+
+	if err != nil {
+		return nil, err
+	}
+
 	ids, err := uc.prodRepo.PesquisaPorIDS(ctx, req.ProdutoIds)
 	if err != nil {
 		return nil, err

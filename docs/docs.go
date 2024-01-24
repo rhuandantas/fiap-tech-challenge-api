@@ -223,6 +223,28 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/pedidos": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pedido"
+                ],
+                "summary": "lista todos os pedidos",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Pedido"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/pedidos/{statuses}": {
             "get": {
                 "produces": [
@@ -406,7 +428,8 @@ const docTemplate = `{
         "domain.Cliente": {
             "type": "object",
             "required": [
-                "cpf"
+                "cpf",
+                "nome"
             ],
             "properties": {
                 "cpf": {
@@ -456,6 +479,9 @@ const docTemplate = `{
         "domain.Pedido": {
             "type": "object",
             "properties": {
+                "cliente_id": {
+                    "type": "integer"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -474,7 +500,7 @@ const docTemplate = `{
                 "status": {
                     "type": "string"
                 },
-                "updated": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -482,9 +508,13 @@ const docTemplate = `{
         "domain.PedidoRequest": {
             "type": "object",
             "required": [
+                "cliente_id",
                 "produtos"
             ],
             "properties": {
+                "cliente_id": {
+                    "type": "integer"
+                },
                 "observacao": {
                     "type": "string"
                 },

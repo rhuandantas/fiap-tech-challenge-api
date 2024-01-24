@@ -6,24 +6,39 @@ import (
 
 const (
 	StatusRecebido     string = "recebido"
-	StatusEmpreparacao string = "em_preparacao"
+	StatusEmPreparacao string = "em_preparacao"
 	StatusPronto       string = "pronto"
 	StatusFinalizado   string = "finalizado"
 )
 
 type PedidoRequest struct {
+	ClienteId  int64   `json:"cliente_id" validate:"required"`
 	ProdutoIds []int64 `json:"produtos" validate:"required"`
 	Observacao string  `json:"observacao"`
 }
 
 type PedidoDTO struct {
 	Id         int64      `xorm:"pk autoincr 'pedido_id'"`
+	ClienteId  int64      `xorm:"'cliente_id'"`
 	Produtos   []*Produto `xorm:"-"`
 	ProdutoIDS string     `xorm:"'produtos'"`
 	Status     string     `xorm:"'status'"`
 	Observacao string
 	CreatedAt  time.Time `xorm:"created"`
 	UpdatedAt  time.Time `xorm:"updated"`
+}
+
+type PedidosDTO []*PedidoDTO
+
+func (a PedidosDTO) Len() int      { return len(a) }
+func (a PedidosDTO) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a PedidosDTO) Less(i, j int) bool {
+	if a[i].Status != a[j].Status {
+		return a[i].Status == StatusPronto || (a[i].Status == StatusEmPreparacao && a[j].Status != StatusPronto)
+	}
+
+	return a[i].CreatedAt.Before(a[j].CreatedAt)
+
 }
 
 type PedidoProduto struct {
@@ -43,11 +58,12 @@ type PedidoResponse struct {
 
 type Pedido struct {
 	Id         int64      `json:"id"`
+	ClienteId  int64      `json:"cliente_id"`
 	Status     string     `json:"status"`
 	Produtos   []*Produto `json:"produtos,omitempty"`
 	Observacao string     `json:"observacao"`
 	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated"`
+	UpdatedAt  time.Time  `json:"updated_at"`
 }
 
 type Fila struct {

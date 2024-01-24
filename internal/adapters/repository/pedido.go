@@ -21,6 +21,7 @@ type PedidoRepo interface {
 	PesquisaPorStatus(ctx context.Context, statuses []string) ([]*domain.PedidoDTO, error)
 	PesquisaPorID(ctx context.Context, id int64) (*domain.PedidoDTO, error)
 	AtualizaStatus(ctx context.Context, status string, id int64) error
+	PesquisaTodos(ctx context.Context) ([]*domain.PedidoDTO, error)
 }
 
 func NewPedidoRepo(connector DBConnector) PedidoRepo {
@@ -73,4 +74,15 @@ func (p *pedido) PesquisaPorID(ctx context.Context, id int64) (*domain.PedidoDTO
 	}
 
 	return dto, nil
+}
+
+func (p *pedido) PesquisaTodos(ctx context.Context) ([]*domain.PedidoDTO, error) {
+	pedidos := make([]*domain.PedidoDTO, 0)
+	err := p.session.Context(ctx).Where("status <> ?", "finalizado").Find(&pedidos)
+	if err != nil {
+		return nil, errorx.InternalError.New(err.Error())
+	}
+
+	return pedidos, nil
+
 }
