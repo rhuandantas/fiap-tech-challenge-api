@@ -86,7 +86,7 @@ kubectl apply -f api-svc.yaml
 kubectl apply -f api-deployment.yaml
 ```
 
-14. O servidor de métricas pode levar de 5 minutos ou até mais para começar a coletar as métricas corretamente, para verificar se o mesmo já está funcionando execute o comando abaixo:
+14. O servidor de métricas pode levar de 5 a 10 minutos ou até mais para começar a coletar as métricas corretamente, para verificar se o mesmo já está funcionando execute o comando abaixo:
 ```
 kubectl get hpa --watch
 ```
