@@ -15,17 +15,19 @@ import (
 )
 
 type Server struct {
-	appName        *string
-	host           string
-	Server         *echo.Echo
-	healthHandler  *handlers.HealthCheck
-	clienteHandler *handlers.Cliente
-	produtoHandler *handlers.Produto
-	pedidoHandler  *handlers.Pedido
+	appName          *string
+	host             string
+	Server           *echo.Echo
+	healthHandler    *handlers.HealthCheck
+	clienteHandler   *handlers.Cliente
+	produtoHandler   *handlers.Produto
+	pedidoHandler    *handlers.Pedido
+	pagamentoHandler *handlers.Pagamento
 }
 
 // NewAPIServer creates the main http with all configurations necessary
-func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto, pedidoHandler *handlers.Pedido) *Server {
+func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto,
+	pedidoHandler *handlers.Pedido, pagamentoHandler *handlers.Pagamento) *Server {
 	host := ":3000"
 	appName := "tech-challenge-api"
 	app := echo.New()
@@ -52,13 +54,14 @@ func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.
 	app.GET("/docs/*", echoSwagger.WrapHandler)
 
 	return &Server{
-		appName:        &appName,
-		host:           host,
-		Server:         app,
-		healthHandler:  healthHandler,
-		clienteHandler: clienteHandler,
-		produtoHandler: produtoHandler,
-		pedidoHandler:  pedidoHandler,
+		appName:          &appName,
+		host:             host,
+		Server:           app,
+		healthHandler:    healthHandler,
+		clienteHandler:   clienteHandler,
+		produtoHandler:   produtoHandler,
+		pedidoHandler:    pedidoHandler,
+		pagamentoHandler: pagamentoHandler,
 	}
 }
 
@@ -67,6 +70,7 @@ func (hs *Server) RegisterHandlers() {
 	hs.clienteHandler.RegistraRotasCliente(hs.Server)
 	hs.produtoHandler.RegistraRotasProduto(hs.Server)
 	hs.pedidoHandler.RegistraRotasPedido(hs.Server)
+	hs.pagamentoHandler.RegistraRotasPagamento(hs.Server)
 }
 
 // Start starts an application on specific port

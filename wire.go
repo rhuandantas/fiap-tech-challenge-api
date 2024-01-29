@@ -37,10 +37,12 @@ func InitializeWebServer() (*http.Server, error) {
 		usecase.NewAtualizaStatusPedidoUC,
 		usecase.NewPegaDetalhePedido,
 		usecase.NewRealizaCheckout,
+		usecase.NewPesquisaPagamento,
 		handlers.NewCliente,
 		handlers.NewProduto,
 		handlers.NewHealthCheck,
 		handlers.NewPedido,
+		handlers.NewPagamento,
 		http.NewAPIServer)
 	return &http.Server{}, nil
 }
