@@ -16,6 +16,7 @@ type fila struct {
 type FilaRepo interface {
 	Insere(ctx context.Context, fila *domain.Fila) error
 	AtualizaStatus(ctx context.Context, status string, pedidoId int64) error
+	ExistePorPedidoStatus(ctx context.Context, pedidoId int64) (bool, error)
 }
 
 func NewFilaRepo(connector DBConnector) FilaRepo {
@@ -41,4 +42,13 @@ func (f *fila) AtualizaStatus(ctx context.Context, status string, pedidoId int64
 	}
 
 	return nil
+}
+
+func (f *fila) ExistePorPedidoStatus(ctx context.Context, pedidoId int64) (bool, error) {
+	existe, err := f.session.Context(ctx).Exist(&domain.Fila{PedidoId: pedidoId})
+	if err != nil {
+		return false, err
+	}
+
+	return existe, nil
 }

@@ -150,6 +150,15 @@ const docTemplate = `{
                         "name": "pedidoId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "status permitido: aprovado | recusado",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StatusRequest"
+                        }
                     }
                 ],
                 "responses": {
