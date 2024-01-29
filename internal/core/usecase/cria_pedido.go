@@ -53,14 +53,6 @@ func (uc cadastraPedido) Cadastra(ctx context.Context, req *domain.PedidoRequest
 		return nil, err
 	}
 
-	if err = uc.filaRepo.Insere(ctx, &domain.Fila{
-		Status:     domain.StatusRecebido,
-		PedidoId:   dto.Id,
-		Observacao: dto.Observacao,
-	}); err != nil {
-		return nil, err
-	}
-
 	return uc.mapperPedido.MapDTOToResponse(dto), err
 }
 

@@ -39,6 +39,23 @@ definitions:
     - cpf
     - nome
     type: object
+  domain.Pagamento:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      pedidoId:
+        type: integer
+      status:
+        type: string
+      tipo:
+        type: string
+      update:
+        type: string
+      valor:
+        type: number
+    type: object
   domain.Pedido:
     properties:
       cliente_id:
@@ -165,6 +182,26 @@ paths:
       summary: Show the status of http.
       tags:
       - Health
+  /pagamento/{pedido_id}:
+    get:
+      consumes:
+      - '*/*'
+      parameters:
+      - description: id do pedido
+        in: path
+        name: pedido_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Pagamento'
+      summary: pega um pagamento por pedido id
+      tags:
+      - Pagamento
   /pedido:
     post:
       consumes:
@@ -214,6 +251,12 @@ paths:
         name: pedidoId
         required: true
         type: integer
+      - description: 'status permitido: aprovado | recusado'
+        in: body
+        name: id
+        required: true
+        schema:
+          $ref: '#/definitions/domain.StatusRequest'
       produces:
       - application/json
       responses:

@@ -21,11 +21,13 @@ func InitializeWebServer() (*http.Server, error) {
 		repository.NewProdutoRepo,
 		repository.NewPedidoRepo,
 		repository.NewPedidoProdutoRepo,
+		repository.NewPagamentoRepo,
 		repository.NewFilaRepo,
 		mapper.NewPedidoMapper,
 		usecase.NewCadastraCliente,
 		usecase.NewPesquisarClientePorCpf,
 		usecase.NewCadastraProduto,
+		usecase.NewCadastraFila,
 		usecase.NewPegaProdutoPorCategoria,
 		usecase.NewApagaProduto,
 		usecase.NewAtualizaProduto,
@@ -35,10 +37,12 @@ func InitializeWebServer() (*http.Server, error) {
 		usecase.NewAtualizaStatusPedidoUC,
 		usecase.NewPegaDetalhePedido,
 		usecase.NewRealizaCheckout,
+		usecase.NewPesquisaPagamento,
 		handlers.NewCliente,
 		handlers.NewProduto,
 		handlers.NewHealthCheck,
 		handlers.NewPedido,
+		handlers.NewPagamento,
 		http.NewAPIServer)
 	return &http.Server{}, nil
 }

@@ -105,6 +105,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/pagamento/{pedido_id}": {
+            "get": {
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pagamento"
+                ],
+                "summary": "pega um pagamento por pedido id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id do pedido",
+                        "name": "pedido_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Pagamento"
+                        }
+                    }
+                }
+            }
+        },
         "/pedido": {
             "post": {
                 "consumes": [
@@ -150,6 +181,15 @@ const docTemplate = `{
                         "name": "pedidoId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "status permitido: aprovado | recusado",
+                        "name": "id",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.StatusRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -473,6 +513,32 @@ const docTemplate = `{
                 },
                 "telefone": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.Pagamento": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "pedidoId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                },
+                "update": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "number"
                 }
             }
         },

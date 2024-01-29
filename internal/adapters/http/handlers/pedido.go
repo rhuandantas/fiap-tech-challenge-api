@@ -24,6 +24,7 @@ type Pedido struct {
 	atualizaStatusUC    usecase.AtualizaStatusPedidoUC
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido
 	realizaCheckoutUC   usecase.RealizarCheckout
+	fila                usecase.CadastrarFila
 }
 
 func NewPedido(validator util.Validator,
@@ -33,6 +34,7 @@ func NewPedido(validator util.Validator,
 	atualizaStatusUC usecase.AtualizaStatusPedidoUC,
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido,
 	realizaCheckoutUC usecase.RealizarCheckout,
+	fila usecase.CadastrarFila,
 ) *Pedido {
 	return &Pedido{
 		validator:           validator,
@@ -42,6 +44,7 @@ func NewPedido(validator util.Validator,
 		atualizaStatusUC:    atualizaStatusUC,
 		pegaDetalhePedidoUC: pegaDetalhePedidoUC,
 		realizaCheckoutUC:   realizaCheckoutUC,
+		fila:                fila,
 	}
 }
 
@@ -80,7 +83,7 @@ func (h *Pedido) cadastra(ctx echo.Context) error {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 
-	return ctx.JSON(http.StatusCreated, echo.Map{"id": response.Id})
+	return ctx.JSON(http.StatusCreated, echo.Map{"id": response.Id, "status": response.Status})
 }
 
 // listaPorStatus godoc
@@ -176,10 +179,14 @@ func (h *Pedido) listaDetail(ctx echo.Context) error {
 // @Accept json
 // @Success 200 {object} commons.MessageResponse
 // @Param        pedidoId   path      integer  true  "id do pedido a ser feito o checkout"
+// @Param        id   body      domain.StatusRequest  true  "status permitido: aprovado | recusado"
 // @Produce json
 // @Router /pedido/checkout/{pedidoId} [patch]
 func (h *Pedido) checkout(ctx echo.Context) error {
 	var (
+		status struct {
+			Status string `json:"status"`
+		}
 		pedidoID int
 		err      error
 	)
@@ -189,12 +196,25 @@ func (h *Pedido) checkout(ctx echo.Context) error {
 		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
 	}
 
-	err = h.realizaCheckoutUC.FakeCheckout(ctx.Request().Context(), int64(pedidoID))
+	if err = ctx.Bind(&status); err != nil {
+		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+	}
+
+	if !checkoutStatusIsValid(status.Status) {
+		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um status válido para checkout", status.Status)))
+	}
+
+	err = h.realizaCheckoutUC.Checkout(ctx.Request().Context(), int64(pedidoID), status.Status)
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 
 	return ctx.JSON(http.StatusOK, commons.MessageResponse{Message: "checkout realizado com sucesso"})
+}
+
+func checkoutStatusIsValid(status string) bool {
+	return status == domain.StatusAprovado ||
+		status == domain.StatusRecusado
 }
 
 // listaTodos godoc
