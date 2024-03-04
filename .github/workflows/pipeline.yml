@@ -9,7 +9,8 @@ jobs:
   aws-auth:
     runs-on: ubuntu-latest
     outputs:
-      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
+      output_ecr_registry: ${{ steps.login-ecr.outputs.registry }}    
+      
     steps:
 
     - name: Configure AWS credentials
@@ -29,15 +30,15 @@ jobs:
     needs: aws-auth
 
     steps:
-    - env:
-        ECR_REGISTRY: ${{ needs.aws-auth.outputs.ecr_registry }}
-        ECR_REPOSITORY: fiap-tech-challenge-api
-        IMAGE_TAG: latest
-        
+            
     - name: Check out code
       uses: actions/checkout@v3
       
-    - name: Build, tag, and push image to Amazon ECR      
+    - name: Build, tag, and push image to Amazon ECR    
+      env:
+        ECR_REGISTRY: ${{ needs.aws-auth.outputs.output_ecr_registry }}
+        ECR_REPOSITORY: fiap-tech-challenge-api
+        IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
