@@ -8,7 +8,8 @@ jobs:
 
   aws-auth:
     runs-on: ubuntu-latest
-
+    outputs:
+      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
     steps:
 
     - name: Configure AWS credentials
@@ -33,7 +34,7 @@ jobs:
       
     - name: Build, tag, and push image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ needs.aws-auth.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ needs.aws-auth.outputs.ecr_registry }}
         ECR_REPOSITORY: fiap-tech-challenge-api
         IMAGE_TAG: latest
       run: |
