@@ -5,12 +5,15 @@ on:
     branches: [ "main" ]
 
 jobs:
+ 
+  build:
 
-  aws-auth:
     runs-on: ubuntu-latest
-    outputs:
-      ecr_registry: ${{ steps.login-ecr.outputs.registry }}
+
     steps:
+            
+    - name: Check out code
+      uses: actions/checkout@v3
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -22,19 +25,10 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-  
-  build:
-
-    runs-on: ubuntu-latest
-    needs: aws-auth
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v3
       
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Build, tag, and push image to Amazon ECR    
       env:
-        ECR_REGISTRY: ${{ needs.aws-auth.outputs.ecr_registry }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: fiap-tech-challenge-api
         IMAGE_TAG: latest
       run: |
