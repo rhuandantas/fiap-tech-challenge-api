@@ -6,7 +6,7 @@
 Foi utilizada a nuvem da Amazon (AWS) para este tech challenge:
 
 1. Faça o login na plataforma da AWS;
-2. Crie um repositório no ECR da AWS chamado fiap-tech-challenge-api;
+2. Crie um repositório privado no ECR da AWS chamado fiap-tech-challenge-api;
 3. Acesse IAM->Usuários e crie um novo usuário chamado Github;
 4. Com esse usuário criado, vá até a listagem de usuários e acesse os detalhes do mesmo;
 5. No menu Permissões que irá aparecer na tela de detalhes, clique no botão "Adicionar permissões" que aparece no canto direito;
