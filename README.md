@@ -30,6 +30,8 @@ echo -n 'db.cbqgeakk0utc.us-east-2.rds.amazonaws.com' | base64
 echo -n '123mudar' | base64
 //OUTPUT: MTIzbXVkYXI=
 ```
+7. Na plataforma do Github, acesse o menu "Settings" do projeto, na tela que se abrir, clique no menu Security->Secrets and variables->Actions;
+8. Adicione uma "repository secret" chamada DB_HOST com o valor em base64 do Endpoint do banco de dados, e crie outra "repository secret" chamada DB_PASS com o valor em base64 da senha do banco de dados;
 
 
 
