@@ -5,6 +5,34 @@
 
 Foi utilizada a nuvem da Amazon (AWS) para este tech challenge:
 
+1. Execute todos os passos que estão no README.md do repositório abaixo para subir a imagem da api no ECR da AWS:
+```
+https://github.com/rhuandantas/fiap-tech-challenge-api
+```
+2. Após isso, execute todos os passos que estão no README.md do repositório abaixo para subir o banco de dados no RDS da AWS, lembre-se de guardar a senha utilizada, isso será necessário para os passos seguintes:
+```
+https://github.com/AlvaroRumpel/fiap-tech-challenge-infra-database
+```
+3. Agora acesse o menu "Bancos de dados" no RDS da AWS;
+4. Acesse os detalhes do banco criado chamado db;
+5. Em "Segurança e conexão" copie o valor que está em "Endpoint" e salve;
+6. Agora precisamos criar o valor dos dados do Endpoint do banco de dados copiado anteriormente e da senha atribuída no passo 2, para isso, seguiremos a documentação de criação de segredos da documentação do Kubernetes:
+```
+https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-config-file/
+```
+Basicamente será necessário executar comandos semelhantes aos do exemplo abaixo e copiar seus valores de saída:
+```
+//Endpoint
+echo -n 'db.cbqgeakk0utc.us-east-2.rds.amazonaws.com' | base64
+//OUTPUT: ZGIuY2JxZ2Vha2swdXRjLnVzLWVhc3QtMi5yZHMuYW1hem9uYXdzLmNvbQ==
+
+//Senha
+echo -n '123mudar' | base64
+//OUTPUT: MTIzbXVkYXI=
+```
+
+
+
 1. Faça o login na plataforma da AWS;
 2. Crie um repositório privado no ECR da AWS chamado fiap-tech-challenge-api;
 3. Acesse IAM->Usuários e crie um novo usuário chamado Github;
@@ -19,6 +47,7 @@ Foi utilizada a nuvem da Amazon (AWS) para este tech challenge:
 12. Na plataforma do Github, acesse o menu "Settings" do projeto, na tela que se abrir, clique no menu Security->Secrets and variables->Actions;
 13. Adicione uma "repository secret" chamada AWS_ACCESS_KEY_ID com o valor copiado de "Chave de acesso", e crie outra "repository secret" chamada AWS_SECRET_ACCESS_KEY com o valor copiado de "Chave de acesso secreta";
 14. Após isso qualquer commit neste repositório que for para a branch "main", irá subir uma imagem desta api no ECR da AWS;
+
 
 
 ### Tech Challenge 2:
