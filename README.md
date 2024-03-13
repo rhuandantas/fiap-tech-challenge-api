@@ -19,6 +19,7 @@
 14. Após isso qualquer commit neste repositório que for para a branch "main", irá subir uma imagem desta api no ECR da AWS;
 
 
+
 ### Tech Challenge 2:
 ### Passos para homologação dos professores da Fiap
 
