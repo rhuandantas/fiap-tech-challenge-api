@@ -9,6 +9,7 @@ package main
 import (
 	"fiap-tech-challenge-api/internal/adapters/http"
 	"fiap-tech-challenge-api/internal/adapters/http/handlers"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/adapters/repository"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/core/usecase/mapper"
@@ -24,7 +25,8 @@ func InitializeWebServer() (*http.Server, error) {
 	cadastrarClienteUseCase := usecase.NewCadastraCliente(clienteRepo)
 	pesquisarClientePorCPF := usecase.NewPesquisarClientePorCpf(clienteRepo)
 	validator := util.NewCustomValidator()
-	cliente := handlers.NewCliente(cadastrarClienteUseCase, pesquisarClientePorCPF, validator)
+	token := auth.NewJwtToken()
+	cliente := handlers.NewCliente(cadastrarClienteUseCase, pesquisarClientePorCPF, validator, token)
 	produtoRepo := repository.NewProdutoRepo(dbConnector)
 	cadastrarProduto := usecase.NewCadastraProduto(produtoRepo)
 	pegarProdutoPorCategoria := usecase.NewPegaProdutoPorCategoria(produtoRepo)

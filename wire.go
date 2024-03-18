@@ -6,6 +6,7 @@ package main
 import (
 	"fiap-tech-challenge-api/internal/adapters/http"
 	"fiap-tech-challenge-api/internal/adapters/http/handlers"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/adapters/repository"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/core/usecase/mapper"
@@ -23,6 +24,7 @@ func InitializeWebServer() (*http.Server, error) {
 		repository.NewPedidoProdutoRepo,
 		repository.NewPagamentoRepo,
 		repository.NewFilaRepo,
+		auth.NewJwtToken,
 		mapper.NewPedidoMapper,
 		usecase.NewCadastraCliente,
 		usecase.NewPesquisarClientePorCpf,
