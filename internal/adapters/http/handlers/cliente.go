@@ -30,7 +30,7 @@ func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePo
 
 func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 	server.POST("/cliente", h.cadastra)
-	server.GET("/clientes/:cpf", h.pegaPorCpf)
+	server.GET("/clientes/:cpf", h.pegaPorCpf, h.tokenJwt.VerifyToken)
 }
 
 // cadastra godoc
@@ -68,6 +68,7 @@ func (h *Cliente) cadastra(ctx echo.Context) error {
 // @Tags Cliente
 // @Accept */*
 // @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        cpf   path      string  true  "cpf do cliente"
 // @Success 200 {object} domain.Cliente
 // @Router /clientes/{cpf} [get]

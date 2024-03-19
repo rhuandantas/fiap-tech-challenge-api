@@ -45,6 +45,7 @@ func InitializeWebServer() (*http.Server, error) {
 		handlers.NewHealthCheck,
 		handlers.NewPedido,
 		handlers.NewPagamento,
+		handlers.NewLogin,
 		http.NewAPIServer)
 	return &http.Server{}, nil
 }
