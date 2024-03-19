@@ -66,6 +66,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "cpf do cliente",
                         "name": "cpf",
                         "in": "path",
@@ -105,6 +113,30 @@ const docTemplate = `{
                 }
             }
         },
+        "/login/{cpf}": {
+            "get": {
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Login"
+                ],
+                "summary": "pega um cliente por cpf",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "cpf do cliente",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/pagamento/{pedido_id}": {
             "get": {
                 "consumes": [
@@ -118,6 +150,14 @@ const docTemplate = `{
                 ],
                 "summary": "pega um pagamento por pedido id",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "id do pedido",
@@ -157,6 +197,14 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/domain.PedidoRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -212,6 +260,14 @@ const docTemplate = `{
                 ],
                 "summary": "lista detalhes do pedido",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "id do pedido a ser lista",

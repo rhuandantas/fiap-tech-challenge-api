@@ -2,6 +2,7 @@ package handlers
 
 import (
 	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/util"
 	"github.com/joomcode/errorx"
@@ -13,17 +14,20 @@ import (
 type Pagamento struct {
 	pesquisaPorPedidoID usecase.PesquisaPagamento
 	validator           util.Validator
+	tokenJwt            auth.Token
 }
 
-func NewPagamento(pesquisaPorPedidoID usecase.PesquisaPagamento, validator util.Validator) *Pagamento {
+func NewPagamento(pesquisaPorPedidoID usecase.PesquisaPagamento, validator util.Validator,
+	tokenJwt auth.Token) *Pagamento {
 	return &Pagamento{
 		pesquisaPorPedidoID: pesquisaPorPedidoID,
 		validator:           validator,
+		tokenJwt:            tokenJwt,
 	}
 }
 
 func (h *Pagamento) RegistraRotasPagamento(server *echo.Echo) {
-	server.GET("/pagamento/:pedido_id", h.pesquisaPorPedidoId)
+	server.GET("/pagamento/:pedido_id", h.pesquisaPorPedidoId, h.tokenJwt.VerifyToken)
 }
 
 // pesquisaPorPedidoId godoc
@@ -31,6 +35,7 @@ func (h *Pagamento) RegistraRotasPagamento(server *echo.Echo) {
 // @Tags Pagamento
 // @Accept */*
 // @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        pedido_id   path      string  true  "id do pedido"
 // @Success 200 {object} domain.Pagamento
 // @Router /pagamento/{pedido_id} [get]

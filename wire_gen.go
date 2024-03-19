@@ -9,6 +9,7 @@ package main
 import (
 	"fiap-tech-challenge-api/internal/adapters/http"
 	"fiap-tech-challenge-api/internal/adapters/http/handlers"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/adapters/repository"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"fiap-tech-challenge-api/internal/core/usecase/mapper"
@@ -24,7 +25,8 @@ func InitializeWebServer() (*http.Server, error) {
 	cadastrarClienteUseCase := usecase.NewCadastraCliente(clienteRepo)
 	pesquisarClientePorCPF := usecase.NewPesquisarClientePorCpf(clienteRepo)
 	validator := util.NewCustomValidator()
-	cliente := handlers.NewCliente(cadastrarClienteUseCase, pesquisarClientePorCPF, validator)
+	token := auth.NewJwtToken()
+	cliente := handlers.NewCliente(cadastrarClienteUseCase, pesquisarClientePorCPF, validator, token)
 	produtoRepo := repository.NewProdutoRepo(dbConnector)
 	cadastrarProduto := usecase.NewCadastraProduto(produtoRepo)
 	pegarProdutoPorCategoria := usecase.NewPegaProdutoPorCategoria(produtoRepo)
@@ -43,9 +45,10 @@ func InitializeWebServer() (*http.Server, error) {
 	pagamentoRepo := repository.NewPagamentoRepo(dbConnector)
 	cadastrarFila := usecase.NewCadastraFila(filaRepo)
 	realizarCheckout := usecase.NewRealizaCheckout(pedidoRepo, pagamentoRepo, cadastrarFila)
-	handlersPedido := handlers.NewPedido(validator, listarPedidoPorStatus, listarTodosPedidos, cadastrarPedido, atualizaStatusPedidoUC, pegarDetalhePedido, realizarCheckout, cadastrarFila)
+	handlersPedido := handlers.NewPedido(validator, listarPedidoPorStatus, listarTodosPedidos, cadastrarPedido, atualizaStatusPedidoUC, pegarDetalhePedido, realizarCheckout, cadastrarFila, token)
 	pesquisaPagamento := usecase.NewPesquisaPagamento(pedidoRepo, pagamentoRepo)
-	pagamento := handlers.NewPagamento(pesquisaPagamento, validator)
-	server := http.NewAPIServer(healthCheck, cliente, produto, handlersPedido, pagamento)
+	pagamento := handlers.NewPagamento(pesquisaPagamento, validator, token)
+	login := handlers.NewLogin(pesquisarClientePorCPF, token)
+	server := http.NewAPIServer(healthCheck, cliente, produto, handlersPedido, pagamento, login)
 	return server, nil
 }

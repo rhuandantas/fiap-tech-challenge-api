@@ -2,6 +2,7 @@ package handlers
 
 import (
 	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase"
@@ -25,6 +26,7 @@ type Pedido struct {
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido
 	realizaCheckoutUC   usecase.RealizarCheckout
 	fila                usecase.CadastrarFila
+	tokenJwt            auth.Token
 }
 
 func NewPedido(validator util.Validator,
@@ -35,6 +37,7 @@ func NewPedido(validator util.Validator,
 	pegaDetalhePedidoUC usecase.PegarDetalhePedido,
 	realizaCheckoutUC usecase.RealizarCheckout,
 	fila usecase.CadastrarFila,
+	tokenJwt auth.Token,
 ) *Pedido {
 	return &Pedido{
 		validator:           validator,
@@ -45,14 +48,15 @@ func NewPedido(validator util.Validator,
 		pegaDetalhePedidoUC: pegaDetalhePedidoUC,
 		realizaCheckoutUC:   realizaCheckoutUC,
 		fila:                fila,
+		tokenJwt:            tokenJwt,
 	}
 }
 
 func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
-	server.POST("/pedido", h.cadastra)
+	server.POST("/pedido", h.cadastra, h.tokenJwt.VerifyToken)
 	server.GET("/pedidos/:statuses", h.listaPorStatus)
 	server.GET("/pedidos", h.listaTodos)
-	server.GET("/pedido/detail/:id", h.listaDetail)
+	server.GET("/pedido/detail/:id", h.listaDetail, h.tokenJwt.VerifyToken)
 	server.PATCH("/pedido/:id", h.atualizaStatus)
 	server.PATCH("/pedido/checkout/:pedidoId", h.checkout)
 }
@@ -62,6 +66,7 @@ func (h *Pedido) RegistraRotasPedido(server *echo.Echo) {
 // @Tags Pedido
 // @Param			pedido	body		domain.PedidoRequest	true	"cria pedido"
 // @Accept json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Produce json
 // @Router /pedido [post]
 func (h *Pedido) cadastra(ctx echo.Context) error {
@@ -152,6 +157,7 @@ func (h *Pedido) atualizaStatus(ctx echo.Context) error {
 // @Summary lista detalhes do pedido
 // @Tags Pedido
 // @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        id   path      integer  true  "id do pedido a ser lista"
 // @Success 200 {object} domain.Pedido
 // @Router /pedido/detail/{id} [get]
