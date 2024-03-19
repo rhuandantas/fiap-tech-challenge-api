@@ -2,6 +2,7 @@ package handlers
 
 import (
 	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
+	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase"
@@ -15,19 +16,21 @@ type Cliente struct {
 	cadastraClienteUC   usecase.CadastrarClienteUseCase
 	pegaClientePorCPFUC usecase.PesquisarClientePorCPF
 	validator           util.Validator
+	tokenJwt            auth.Token
 }
 
-func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePorCPFUC usecase.PesquisarClientePorCPF, validator util.Validator) *Cliente {
+func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePorCPFUC usecase.PesquisarClientePorCPF, validator util.Validator, tokenJwt auth.Token) *Cliente {
 	return &Cliente{
 		cadastraClienteUC:   cadastraClienteUC,
 		pegaClientePorCPFUC: pegaClientePorCPFUC,
 		validator:           validator,
+		tokenJwt:            tokenJwt,
 	}
 }
 
 func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 	server.POST("/cliente", h.cadastra)
-	server.GET("/clientes/:cpf", h.pegaPorCpf)
+	server.GET("/clientes/:cpf", h.pegaPorCpf, h.tokenJwt.VerifyToken)
 }
 
 // cadastra godoc
@@ -65,6 +68,7 @@ func (h *Cliente) cadastra(ctx echo.Context) error {
 // @Tags Cliente
 // @Accept */*
 // @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        cpf   path      string  true  "cpf do cliente"
 // @Success 200 {object} domain.Cliente
 // @Router /clientes/{cpf} [get]
@@ -82,6 +86,14 @@ func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
+
+	token, err := h.tokenJwt.GenerateToken(cpf)
+	if err != nil {
+		return err
+	}
+
+	ctx.Response().Header().Set("Authorization", token)
+
 	return ctx.JSON(http.StatusOK, cliente)
 }
 

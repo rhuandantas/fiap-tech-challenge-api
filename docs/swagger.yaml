@@ -152,6 +152,12 @@ paths:
       consumes:
       - '*/*'
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: cpf do cliente
         in: path
         name: cpf
@@ -182,11 +188,33 @@ paths:
       summary: Show the status of http.
       tags:
       - Health
+  /login/{cpf}:
+    get:
+      consumes:
+      - '*/*'
+      parameters:
+      - description: cpf do cliente
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: pega um cliente por cpf
+      tags:
+      - Login
   /pagamento/{pedido_id}:
     get:
       consumes:
       - '*/*'
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id do pedido
         in: path
         name: pedido_id
@@ -213,6 +241,12 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/domain.PedidoRequest'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
@@ -270,6 +304,12 @@ paths:
   /pedido/detail/{id}:
     get:
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: id do pedido a ser lista
         in: path
         name: id
