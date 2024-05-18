@@ -1,6 +1,9 @@
 install:
+	go install github.com/swaggo/swag/cmd/swag@latest
 	go get -u github.com/swaggo/swag
-generate-swagger:
+	go get github.com/onsi/ginkgo/v2@latest
+	go install github.com/onsi/ginkgo/v2/ginkgo
+generate-swagger: install
 	swag init
 generate-di:
 	# TODO if the files doesnt exists ignore the exit(1)
