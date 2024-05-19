@@ -1,22 +1,21 @@
 package handlers
 
 import (
-	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
-	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
-	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase"
 	"github.com/joomcode/errorx"
 	"github.com/labstack/echo/v4"
+	serverErr "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/errors"
+	"github.com/rhuandantas/fiap-tech-challenge-commons/pkg/middlewares/auth"
 	"net/http"
 )
 
 type Login struct {
-	pegaClientePorCPFUC usecase.PesquisarClientePorCPF
+	pegaClientePorCPFUC usecase.PesquisarCliente
 	tokenJwt            auth.Token
 }
 
-func NewLogin(pegaClientePorCPFUC usecase.PesquisarClientePorCPF, tokenJwt auth.Token) *Login {
+func NewLogin(pegaClientePorCPFUC usecase.PesquisarCliente, tokenJwt auth.Token) *Login {
 	return &Login{
 		tokenJwt:            tokenJwt,
 		pegaClientePorCPFUC: pegaClientePorCPFUC,
@@ -41,16 +40,16 @@ func (h *Login) login(ctx echo.Context) error {
 	}
 
 	if err := c.ValidateCPF(); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
-	cliente, err := h.pegaClientePorCPFUC.Pesquisa(ctx.Request().Context(), c)
+	cliente, err := h.pegaClientePorCPFUC.PesquisaPorCPF(ctx.Request().Context(), c)
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
 
 	if cliente == nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New("user not found"))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New("user not found"))
 	}
 
 	token, err := h.tokenJwt.GenerateToken(cpf)

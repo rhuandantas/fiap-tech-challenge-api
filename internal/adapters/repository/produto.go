@@ -2,10 +2,11 @@ package repository
 
 import (
 	"context"
-	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fmt"
 	"github.com/joomcode/errorx"
+	db "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/db/mysql"
+	_erro "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/errors"
 	"xorm.io/xorm"
 )
 
@@ -24,7 +25,11 @@ type ProdutoRepo interface {
 	Atualiza(ctx context.Context, produto *domain.Produto, id int64) error
 }
 
-func NewProdutoRepo(connector DBConnector) ProdutoRepo {
+func NewProdutoRepo(connector db.DBConnector) ProdutoRepo {
+	err := connector.SyncTables(new(domain.Produto))
+	if err != nil {
+		panic(err)
+	}
 	session := connector.GetORM().Table(tableNameProduto)
 	return &produto{
 		session: session,
@@ -34,8 +39,8 @@ func NewProdutoRepo(connector DBConnector) ProdutoRepo {
 func (p *produto) Insere(ctx context.Context, produto *domain.Produto) (*domain.Produto, error) {
 	_, err := p.session.Context(ctx).Insert(produto)
 	if err != nil {
-		if commons.IsDuplicatedEntryError(err) {
-			return nil, commons.BadRequest.New("produto já existe")
+		if _erro.IsDuplicatedEntryError(err) {
+			return nil, _erro.BadRequest.New("produto já existe")
 		}
 
 		return nil, err
@@ -61,7 +66,7 @@ func (p *produto) PesquisaPorID(ctx context.Context, produto *domain.Produto) (*
 	}
 
 	if !has {
-		return nil, commons.NotFound.New("produto não encontrado")
+		return nil, _erro.NotFound.New("produto não encontrado")
 	}
 
 	return produto, nil
