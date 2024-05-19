@@ -15,20 +15,18 @@ import (
 )
 
 type Server struct {
-	appName          *string
-	host             string
-	Server           *echo.Echo
-	healthHandler    *handlers.HealthCheck
-	clienteHandler   *handlers.Cliente
-	produtoHandler   *handlers.Produto
-	pedidoHandler    *handlers.Pedido
-	pagamentoHandler *handlers.Pagamento
-	loginHandler     *handlers.Login
+	appName        *string
+	host           string
+	Server         *echo.Echo
+	healthHandler  *handlers.HealthCheck
+	clienteHandler *handlers.Cliente
+	produtoHandler *handlers.Produto
+	loginHandler   *handlers.Login
 }
 
 // NewAPIServer creates the main http with all configurations necessary
 func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.Cliente, produtoHandler *handlers.Produto,
-	pedidoHandler *handlers.Pedido, pagamentoHandler *handlers.Pagamento, loginHandler *handlers.Login) *Server {
+	loginHandler *handlers.Login) *Server {
 	host := ":3000"
 	appName := "tech-challenge-api"
 	app := echo.New()
@@ -55,15 +53,13 @@ func NewAPIServer(healthHandler *handlers.HealthCheck, clienteHandler *handlers.
 	app.GET("/docs/*", echoSwagger.WrapHandler)
 
 	return &Server{
-		appName:          &appName,
-		host:             host,
-		Server:           app,
-		healthHandler:    healthHandler,
-		clienteHandler:   clienteHandler,
-		produtoHandler:   produtoHandler,
-		pedidoHandler:    pedidoHandler,
-		pagamentoHandler: pagamentoHandler,
-		loginHandler:     loginHandler,
+		appName:        &appName,
+		host:           host,
+		Server:         app,
+		healthHandler:  healthHandler,
+		clienteHandler: clienteHandler,
+		produtoHandler: produtoHandler,
+		loginHandler:   loginHandler,
 	}
 }
 
@@ -71,8 +67,6 @@ func (hs *Server) RegisterHandlers() {
 	hs.healthHandler.RegisterHealth(hs.Server)
 	hs.clienteHandler.RegistraRotasCliente(hs.Server)
 	hs.produtoHandler.RegistraRotasProduto(hs.Server)
-	hs.pedidoHandler.RegistraRotasPedido(hs.Server)
-	hs.pagamentoHandler.RegistraRotasPagamento(hs.Server)
 	hs.loginHandler.RegistraRotasLogin(hs.Server)
 }
 

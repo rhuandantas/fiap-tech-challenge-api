@@ -6,20 +6,24 @@ import (
 	"fiap-tech-challenge-api/internal/core/domain"
 )
 
-type PesquisarClientePorCPF interface {
-	Pesquisa(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
+type PesquisarCliente interface {
+	PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
+	PesquisaPorID(ctx context.Context, id int64) (*domain.Cliente, error)
 }
 
-type pesquisarClientePorCPFUC struct {
+type pesquisarClienteUC struct {
 	clienteRepo repository.ClienteRepo
 }
 
-func NewPesquisarClientePorCpf(clienteRepo repository.ClienteRepo) PesquisarClientePorCPF {
-	return &pesquisarClientePorCPFUC{
+func NewPesquisarCliente(clienteRepo repository.ClienteRepo) PesquisarCliente {
+	return &pesquisarClienteUC{
 		clienteRepo: clienteRepo,
 	}
 }
 
-func (uc *pesquisarClientePorCPFUC) Pesquisa(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error) {
+func (uc *pesquisarClienteUC) PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error) {
 	return uc.clienteRepo.PesquisaPorCPF(ctx, cliente)
+}
+func (uc *pesquisarClienteUC) PesquisaPorID(ctx context.Context, id int64) (*domain.Cliente, error) {
+	return uc.clienteRepo.PesquisaPorId(ctx, id)
 }
