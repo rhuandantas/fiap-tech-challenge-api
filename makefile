@@ -10,10 +10,6 @@ generate-di:
 	rm wire_gen.go
 	go generate
 
-set-vars:
-	export DB_PASS=12345678
-	export DB_NAME=tech_challenge
-	export DB_USER=root
-	export DB_HOST=mysql
-	export DB_PORT=3306
-	export AUTH_SECRET=Testando
+mock:
+	mockgen -source=internal/adapters/repository/cliente.go -package=mock_repo -destination=test/mock/repository/cliente.go
+	mockgen -source=internal/adapters/repository/produto.go -package=mock_repo -destination=test/mock/repository/produto.go
