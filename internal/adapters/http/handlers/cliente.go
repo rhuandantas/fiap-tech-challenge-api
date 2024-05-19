@@ -1,36 +1,37 @@
 package handlers
 
 import (
-	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
-	"fiap-tech-challenge-api/internal/adapters/http/middlewares/auth"
-	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase"
-	"fiap-tech-challenge-api/internal/util"
 	"github.com/joomcode/errorx"
 	"github.com/labstack/echo/v4"
+	serverErr "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/errors"
+	"github.com/rhuandantas/fiap-tech-challenge-commons/pkg/middlewares/auth"
+	"github.com/rhuandantas/fiap-tech-challenge-commons/pkg/util"
 	"net/http"
+	"strconv"
 )
 
 type Cliente struct {
-	cadastraClienteUC   usecase.CadastrarClienteUseCase
-	pegaClientePorCPFUC usecase.PesquisarClientePorCPF
-	validator           util.Validator
-	tokenJwt            auth.Token
+	cadastraClienteUC usecase.CadastrarClienteUseCase
+	pegaClienteUC     usecase.PesquisarCliente
+	validator         util.Validator
+	tokenJwt          auth.Token
 }
 
-func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePorCPFUC usecase.PesquisarClientePorCPF, validator util.Validator, tokenJwt auth.Token) *Cliente {
+func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePorCPFUC usecase.PesquisarCliente, validator util.Validator, tokenJwt auth.Token) *Cliente {
 	return &Cliente{
-		cadastraClienteUC:   cadastraClienteUC,
-		pegaClientePorCPFUC: pegaClientePorCPFUC,
-		validator:           validator,
-		tokenJwt:            tokenJwt,
+		cadastraClienteUC: cadastraClienteUC,
+		pegaClienteUC:     pegaClientePorCPFUC,
+		validator:         validator,
+		tokenJwt:          tokenJwt,
 	}
 }
 
 func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 	server.POST("/cliente", h.cadastra)
 	server.GET("/clientes/:cpf", h.pegaPorCpf, h.tokenJwt.VerifyToken)
+	server.GET("/internal/clientes/:id", h.pegaPorID)
 }
 
 // cadastra godoc
@@ -48,11 +49,11 @@ func (h *Cliente) cadastra(ctx echo.Context) error {
 	)
 
 	if err = ctx.Bind(&cliente); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	if err = h.validateClienteBody(&cliente); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	newCliente, err := h.cadastraClienteUC.Cadastra(ctx.Request().Context(), &cliente)
@@ -79,10 +80,10 @@ func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 	}
 
 	if err := c.ValidateCPF(); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
-	cliente, err := h.pegaClientePorCPFUC.Pesquisa(ctx.Request().Context(), c)
+	cliente, err := h.pegaClienteUC.PesquisaPorCPF(ctx.Request().Context(), c)
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
@@ -93,6 +94,30 @@ func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 	}
 
 	ctx.Response().Header().Set("Authorization", token)
+
+	return ctx.JSON(http.StatusOK, cliente)
+}
+
+// pegaPorID godoc
+// @Summary pega um cliente por id
+// @Tags Cliente
+// @Accept */*
+// @Produce json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param        id   path      string  true  "id do cliente"
+// @Success 200 {object} domain.Cliente
+// @Router /clientes/{id} [get]
+func (h *Cliente) pegaPorID(ctx echo.Context) error {
+	id := ctx.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return serverErr.BadRequest.New(err.Error())
+	}
+
+	cliente, err := h.pegaClienteUC.PesquisaPorID(ctx.Request().Context(), int64(intID))
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
 
 	return ctx.JSON(http.StatusOK, cliente)
 }

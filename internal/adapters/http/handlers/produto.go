@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	serverErr "fiap-tech-challenge-api/internal/adapters/http/error"
-	"fiap-tech-challenge-api/internal/core/commons"
 	"fiap-tech-challenge-api/internal/core/domain"
 	"fiap-tech-challenge-api/internal/core/usecase"
-	"fiap-tech-challenge-api/internal/util"
 	"fmt"
+	serverErr "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/errors"
+	"github.com/rhuandantas/fiap-tech-challenge-commons/pkg/util"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/joomcode/errorx"
 	"github.com/labstack/echo/v4"
@@ -20,6 +20,7 @@ type Produto struct {
 	pegarProdutoPorCategoriaUC usecase.PegarProdutoPorCategoria
 	apagarProduto              usecase.ApagarProduto
 	atualizarProduto           usecase.AtualizarProduto
+	pegaPorIdsUC               usecase.PegaPorIDS
 }
 
 func NewProduto(validator util.Validator,
@@ -27,6 +28,7 @@ func NewProduto(validator util.Validator,
 	pegarProdutoPorCategoriaUC usecase.PegarProdutoPorCategoria,
 	apagarProduto usecase.ApagarProduto,
 	atualizarProduto usecase.AtualizarProduto,
+	pegaPorIdsUC usecase.PegaPorIDS,
 ) *Produto {
 	return &Produto{
 		validator:                  validator,
@@ -34,12 +36,14 @@ func NewProduto(validator util.Validator,
 		pegarProdutoPorCategoriaUC: pegarProdutoPorCategoriaUC,
 		apagarProduto:              apagarProduto,
 		atualizarProduto:           atualizarProduto,
+		pegaPorIdsUC:               pegaPorIdsUC,
 	}
 }
 
 func (h *Produto) RegistraRotasProduto(server *echo.Echo) {
 	server.POST("/produto", h.cadastra)
-	server.GET("/produtos/:categoria", h.listaPorCategoria)
+	server.GET("/produto/:categoria", h.listaPorCategoria)
+	server.GET("/internal/produto/:ids", h.pegaPorIDS)
 	server.DELETE("/produto/:id", h.apaga)
 	server.PUT("/produto/:id", h.atualiza)
 }
@@ -59,11 +63,11 @@ func (h *Produto) cadastra(ctx echo.Context) error {
 	)
 
 	if err = ctx.Bind(&produto); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	if err = h.validateProdutoBody(&produto); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	newProduto, err := h.cadastraProdutoUC.Cadastra(ctx.Request().Context(), &produto)
@@ -87,7 +91,7 @@ func (h *Produto) listaPorCategoria(ctx echo.Context) error {
 		Categoria: categoria,
 	}
 	if err := p.ValidaCategoria(); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	produtos, err := h.pegarProdutoPorCategoriaUC.Pega(ctx.Request().Context(), p)
@@ -97,6 +101,22 @@ func (h *Produto) listaPorCategoria(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, produtos)
 }
 
+// pegaPorIDS godoc
+// @Summary pega produtos por ids
+// @Tags Produto
+// @Produce json
+// @Param        ids   path      string  true  "ids dos produtos separados por virgula"
+// @Success 200 {array} domain.Produto
+// @Router /internal/produto/{ids} [get]
+func (h *Produto) pegaPorIDS(ctx echo.Context) error {
+	ids := ctx.Param("ids")
+	separatedIds := strings.Split(ids, ",")
+	produtos, err := h.pegaPorIdsUC.PegaPorIDS(ctx.Request().Context(), separatedIds)
+	if err != nil {
+		return serverErr.HandleError(ctx, errorx.Cast(err))
+	}
+	return ctx.JSON(http.StatusOK, produtos)
+}
 func (h *Produto) validateProdutoBody(p *domain.Produto) error {
 	if err := h.validator.ValidateStruct(p); err != nil {
 		return err
@@ -123,7 +143,7 @@ func (h *Produto) apaga(ctx echo.Context) error {
 
 	id := ctx.Param("id")
 	if produtoID, err = strconv.Atoi(id); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
 	}
 	p := &domain.Produto{
 		Id: int64(produtoID),
@@ -152,16 +172,16 @@ func (h *Produto) atualiza(ctx echo.Context) error {
 	)
 
 	if err = ctx.Bind(&produto); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	if err = h.validateProdutoBody(&produto); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(err.Error()))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
 
 	id := ctx.Param("id")
 	if produtoID, err = strconv.Atoi(id); err != nil {
-		return serverErr.HandleError(ctx, commons.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
+		return serverErr.HandleError(ctx, serverErr.BadRequest.New(fmt.Sprintf("%s não é um id válido", id)))
 	}
 
 	err = h.atualizarProduto.Atualiza(ctx.Request().Context(), &produto, int64(produtoID))
