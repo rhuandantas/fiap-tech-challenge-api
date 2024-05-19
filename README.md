@@ -1,6 +1,6 @@
 # fiap-tech-challenge-api
 
-### Tech Challenge 3:
+### Tech Challenge 3 e 4:
 ### Passos para homologação dos professores da Fiap
 
 1. Faça o login na plataforma da AWS;
