@@ -22,6 +22,7 @@ func InitializeWebServer() (*http.Server, error) {
 		repository.NewProdutoRepo,
 		auth.NewJwtToken,
 		usecase.NewCadastraCliente,
+		usecase.NewLGPD,
 		usecase.NewPesquisarCliente,
 		usecase.NewCadastraProduto,
 		usecase.NewPegaProdutoPorCategoria,
