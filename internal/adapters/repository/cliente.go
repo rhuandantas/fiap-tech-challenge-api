@@ -5,7 +5,7 @@ import (
 	"fiap-tech-challenge-api/internal/core/domain"
 	db "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/db/mysql"
 	_error "github.com/rhuandantas/fiap-tech-challenge-commons/pkg/errors"
-
+	"github.com/joomcode/errorx"
 	"xorm.io/xorm"
 )
 
@@ -19,6 +19,8 @@ type ClienteRepo interface {
 	Insere(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
 	PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
 	PesquisaPorId(ctx context.Context, id int64) (*domain.Cliente, error)
+	Anonimizar(ctx context.Context, cliente *domain.Cliente) error
+
 }
 
 func NewClienteRepo(connector db.DBConnector) ClienteRepo {
@@ -75,4 +77,30 @@ func (r *cliente) PesquisaPorId(ctx context.Context, id int64) (*domain.Cliente,
 	}
 
 	return &c, nil
+}
+
+func (r *cliente) Anonimizar(ctx context.Context, cliente *domain.Cliente) error {
+
+	newCliente := domain.Cliente{
+		Cpf: nil,
+		Nome: nil,
+		Email: nil,
+		Telefone: nil,
+	}
+
+	found, err := r.session.Context(ctx).Get(&cliente)
+	if err != nil {
+		return err
+	}
+
+	if !found {
+		return _error.NotFound.New("cliente não encontrado")
+	}
+
+	affected, err := r.session.Context(ctx).ID(&cliente.Id).Update(newCliente)
+	if err != nil {
+		return errorx.InternalError.New(err.Error())
+	}
+	_ = affected
+	return nil
 }
