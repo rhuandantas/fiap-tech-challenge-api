@@ -2,6 +2,7 @@ package domain
 
 import (
 	"bytes"
+	"database/sql"
 	"errors"
 	"fiap-tech-challenge-api/internal/core/commons"
 	"time"
@@ -16,23 +17,59 @@ type ClienteRequest struct {
 	Email    string `json:"email" validate:"email"`
 	Telefone string `json:"telefone"`
 }
-
-type LGPDClienteRequest struct {
-	Cpf      string `json:"cpf" validate:"required" xorm:"unique"`
-}
-
-type Cliente struct {
-	Id        int64     `json:"id" xorm:"pk autoincr 'cliente_id'"`
-	Cpf       *string    `json:"cpf" xorm:"null unique"`
-	Nome      *string    `json:"nome" xorm:"null"`
-	Email     *string    `json:"email" xorm:"null"`
-	Telefone  *string    `json:"telefone" xorm:"null"`
+type ClienteResponse struct {
+	Cpf       string    `json:"cpf" validate:"required" xorm:"unique"`
+	Nome      string    `json:"nome" validate:"required"`
+	Email     string    `json:"email" validate:"email"`
+	Telefone  string    `json:"telefone"`
 	CreatedAt time.Time `json:"created_at" xorm:"created"`
 	UpdatedAt time.Time `json:"updated_at" xorm:"updated"`
 }
 
-func (c *Cliente) ValidateCPF() error {
-	if !brdoc.IsCPF(DerefString(c.Cpf)) {
+type LGPDClienteRequest struct {
+	Cpf string `json:"cpf" validate:"required" xorm:"unique"`
+}
+
+type Cliente struct {
+	Id        int64          `json:"id" xorm:"pk autoincr 'cliente_id'"`
+	Cpf       sql.NullString `json:"cpf" xorm:"null"`
+	Nome      sql.NullString `json:"nome" xorm:"null"`
+	Email     sql.NullString `json:"email" xorm:"null"`
+	Telefone  sql.NullString `json:"telefone" xorm:"null"`
+	CreatedAt time.Time      `json:"created_at" xorm:"created"`
+	UpdatedAt time.Time      `json:"updated_at" xorm:"updated"`
+}
+
+func NewClient(cli *ClienteRequest) *Cliente {
+	return &Cliente{
+		Cpf:      setNullString(cli.Cpf),
+		Nome:     setNullString(cli.Nome),
+		Email:    setNullString(cli.Email),
+		Telefone: setNullString(cli.Telefone),
+	}
+}
+
+func NewClienteResponse(cli *Cliente) *ClienteResponse {
+	return &ClienteResponse{
+		Cpf:       cli.Cpf.String,
+		Nome:      cli.Nome.String,
+		Email:     cli.Email.String,
+		Telefone:  cli.Telefone.String,
+		CreatedAt: cli.CreatedAt,
+		UpdatedAt: cli.UpdatedAt,
+	}
+}
+
+func setNullString(str string) sql.NullString {
+	if str == "" {
+		return sql.NullString{}
+	}
+
+	return sql.NullString{String: str, Valid: true}
+}
+
+func (c *ClienteRequest) ValidateCPF() error {
+	if !brdoc.IsCPF(c.Cpf) {
 		return errors.New(commons.CpfInvalido)
 	}
 
@@ -42,22 +79,20 @@ func (c *Cliente) ValidateCPF() error {
 }
 
 func DerefString(s *string) string {
-    if s != nil {
-        return *s
-    }
+	if s != nil {
+		return *s
+	}
 
-    return ""
+	return ""
 }
 
-
-func (c *Cliente) limpaCaracteresEspeciais() {
+func (c *ClienteRequest) limpaCaracteresEspeciais() {
 	buf := bytes.NewBufferString("")
-	for _, r := range DerefString(c.Cpf) {
+	for _, r := range c.Cpf {
 		if unicode.IsDigit(r) {
 			buf.WriteRune(r)
 		}
 	}
 
-	varAux := string(buf.String())
-	c.Cpf = &varAux
+	c.Cpf = buf.String()
 }

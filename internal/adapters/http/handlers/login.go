@@ -35,8 +35,8 @@ func (h *Login) RegistraRotasLogin(server *echo.Echo) {
 // @Router /login/{cpf} [get]
 func (h *Login) login(ctx echo.Context) error {
 	cpf := ctx.Param("cpf")
-	c := &domain.Cliente{
-		Cpf: &cpf,
+	c := &domain.ClienteRequest{
+		Cpf: cpf,
 	}
 
 	if err := c.ValidateCPF(); err != nil {

@@ -7,7 +7,7 @@ import (
 )
 
 type LGPD interface {
-	Anonimizar(ctx context.Context, cliente *domain.Cliente) error
+	Anonimizar(ctx context.Context, cliente *domain.ClienteRequest) error
 }
 
 type anonimizarClienteUC struct {
@@ -20,7 +20,18 @@ func NewLGPD(clienteRepo repository.ClienteRepo) LGPD {
 	}
 }
 
+func (uc *anonimizarClienteUC) Anonimizar(ctx context.Context, cliente *domain.ClienteRequest) error {
+	dto := domain.NewClient(cliente)
 
-func (uc *anonimizarClienteUC) Anonimizar(ctx context.Context, cliente *domain.Cliente) error {
-	return uc.clienteRepo.Anonimizar(ctx, cliente)
+	cli, err := uc.clienteRepo.PesquisaPorCPF(ctx, dto)
+	if err != nil {
+		return err
+	}
+
+	cli.Email.String = ""
+	cli.Cpf.String = ""
+	cli.Nome.String = ""
+	cli.Telefone.String = ""
+
+	return uc.clienteRepo.Anonimizar(ctx, cli)
 }
