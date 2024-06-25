@@ -7,7 +7,7 @@ import (
 )
 
 type PesquisarCliente interface {
-	PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error)
+	PesquisaPorCPF(ctx context.Context, cliente *domain.ClienteRequest) (*domain.Cliente, error)
 	PesquisaPorID(ctx context.Context, id int64) (*domain.Cliente, error)
 }
 
@@ -21,8 +21,8 @@ func NewPesquisarCliente(clienteRepo repository.ClienteRepo) PesquisarCliente {
 	}
 }
 
-func (uc *pesquisarClienteUC) PesquisaPorCPF(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error) {
-	return uc.clienteRepo.PesquisaPorCPF(ctx, cliente)
+func (uc *pesquisarClienteUC) PesquisaPorCPF(ctx context.Context, cliente *domain.ClienteRequest) (*domain.Cliente, error) {
+	return uc.clienteRepo.PesquisaPorCPF(ctx, domain.NewClient(cliente))
 }
 func (uc *pesquisarClienteUC) PesquisaPorID(ctx context.Context, id int64) (*domain.Cliente, error) {
 	return uc.clienteRepo.PesquisaPorId(ctx, id)

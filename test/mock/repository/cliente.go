@@ -40,6 +40,20 @@ func (m *MockClienteRepo) EXPECT() *MockClienteRepoMockRecorder {
 	return m.recorder
 }
 
+// Anonimizar mocks base method.
+func (m *MockClienteRepo) Anonimizar(ctx context.Context, cliente *domain.Cliente) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Anonimizar", ctx, cliente)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Anonimizar indicates an expected call of Anonimizar.
+func (mr *MockClienteRepoMockRecorder) Anonimizar(ctx, cliente any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Anonimizar", reflect.TypeOf((*MockClienteRepo)(nil).Anonimizar), ctx, cliente)
+}
+
 // Insere mocks base method.
 func (m *MockClienteRepo) Insere(ctx context.Context, cliente *domain.Cliente) (*domain.Cliente, error) {
 	m.ctrl.T.Helper()
