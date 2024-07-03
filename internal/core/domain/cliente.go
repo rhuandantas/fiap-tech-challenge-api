@@ -18,6 +18,7 @@ type ClienteRequest struct {
 	Telefone string `json:"telefone"`
 }
 type ClienteResponse struct {
+	Id        int64     `json:"id"`
 	Cpf       string    `json:"cpf" validate:"required" xorm:"unique"`
 	Nome      string    `json:"nome" validate:"required"`
 	Email     string    `json:"email" validate:"email"`
@@ -51,6 +52,7 @@ func NewClient(cli *ClienteRequest) *Cliente {
 
 func NewClienteResponse(cli *Cliente) *ClienteResponse {
 	return &ClienteResponse{
+		Id:        cli.Id,
 		Cpf:       cli.Cpf.String,
 		Nome:      cli.Nome.String,
 		Email:     cli.Email.String,

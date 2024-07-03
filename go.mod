@@ -10,7 +10,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.15.0
 	github.com/onsi/gomega v1.31.1
 	github.com/paemuri/brdoc v1.1.2
-	github.com/rhuandantas/fiap-tech-challenge-commons v0.0.0-20240513012913-0709ec9e53bf
+	github.com/rhuandantas/fiap-tech-challenge-commons v0.0.0-20240623204632-f4903697c6c0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
 	go.uber.org/mock v0.4.0
