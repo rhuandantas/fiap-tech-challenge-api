@@ -240,3 +240,4 @@ swag init
 delete wire_gen.go
 go generate ./...
 ```
+
