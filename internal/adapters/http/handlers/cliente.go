@@ -32,7 +32,7 @@ func NewCliente(cadastraClienteUC usecase.CadastrarClienteUseCase, pegaClientePo
 
 func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 	server.POST("/cliente", h.cadastra)
-	server.GET("/clientes/:cpf", h.pegaPorCpf, h.tokenJwt.VerifyToken)
+	server.GET("/clientes/:cpf", h.pegaPorCpf)
 	server.GET("/internal/clientes/:id", h.pegaPorID)
 	server.DELETE("/lgpd/clientes/delete", h.anonimizarClientLGPD)
 }
@@ -43,11 +43,11 @@ func (h *Cliente) RegistraRotasCliente(server *echo.Echo) {
 // @Accept json
 // @Produce json
 // @Param			pedido	body		domain.ClienteRequest	true	"cria novo cliente"
-// @Success 200 {object} domain.Cliente
+// @Success 200 {object} domain.ClienteResponse
 // @Router /cliente [post]
 func (h *Cliente) cadastra(ctx echo.Context) error {
 	var (
-		cliente domain.Cliente
+		cliente domain.ClienteRequest
 		err     error
 	)
 
@@ -74,13 +74,13 @@ func (h *Cliente) cadastra(ctx echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        cpf   path      string  true  "cpf do cliente"
-// @Success 200 {object} domain.Cliente
+// @Success 200 {object} domain.ClienteResponse
 // @Router /clientes/{cpf} [get]
 func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 	cpf := ctx.Param("cpf")
-	
-	c := &domain.Cliente{
-		Cpf: &cpf,
+
+	c := &domain.ClienteRequest{
+		Cpf: cpf,
 	}
 
 	if err := c.ValidateCPF(); err != nil {
@@ -99,7 +99,7 @@ func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 
 	ctx.Response().Header().Set("Authorization", token)
 
-	return ctx.JSON(http.StatusOK, cliente)
+	return ctx.JSON(http.StatusOK, domain.NewClienteResponse(cliente))
 }
 
 // pegaPorID godoc
@@ -109,7 +109,7 @@ func (h *Cliente) pegaPorCpf(ctx echo.Context) error {
 // @Produce json
 // @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Param        id   path      string  true  "id do cliente"
-// @Success 200 {object} domain.Cliente
+// @Success 200 {object} domain.ClienteResponse
 // @Router /clientes/{id} [get]
 func (h *Cliente) pegaPorID(ctx echo.Context) error {
 	id := ctx.Param("id")
@@ -126,7 +126,7 @@ func (h *Cliente) pegaPorID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, cliente)
 }
 
-func (h *Cliente) validateClienteBody(c *domain.Cliente) error {
+func (h *Cliente) validateClienteBody(c *domain.ClienteRequest) error {
 	if err := h.validator.ValidateStruct(c); err != nil {
 		return err
 	}
@@ -144,14 +144,14 @@ func (h *Cliente) validateClienteBody(c *domain.Cliente) error {
 // @Accept json
 // @Produce json
 // @Param			pedido	body		domain.LGPDClienteRequest	true	"anonimiza os dados do cliente"
-// @Success 200 {object} domain.Cliente
+// @Success 200 {object} domain.ClienteResponse
 // @Router /lgpd/clientes/delete [delete]
 func (h *Cliente) anonimizarClientLGPD(ctx echo.Context) error {
 	var (
-		cliente domain.Cliente
+		cliente domain.ClienteRequest
 		err     error
 	)
-	
+
 	if err = ctx.Bind(&cliente); err != nil {
 		return serverErr.HandleError(ctx, serverErr.BadRequest.New(err.Error()))
 	}
@@ -164,7 +164,7 @@ func (h *Cliente) anonimizarClientLGPD(ctx echo.Context) error {
 	if err != nil {
 		return serverErr.HandleError(ctx, errorx.Cast(err))
 	}
-	
+
 	return ctx.NoContent(http.StatusOK)
 
 }
