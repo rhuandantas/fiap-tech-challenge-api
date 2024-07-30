@@ -1,7 +1,31 @@
 # fiap-tech-challenge-api
 
+## Justificativa do Padrão SAGA escolhido: 
+
+Optamos por usar o padrão SAGA Coreografado pois como a implementação foi de baixa complexidade, e apenas uma mensagem foi enviada por um microsserviço e escutada por outro, e segundo o que foi dito nas aulas SAGA's com poucas chamadas não teriam a necessidade de utilizar algo orquestrado, a nossa escolha foi de usar o padrão de coreografia no serviço SQS da AWS.
+
+## OWASP ZAP: 
+
+Como executamos o relatório e nenhuma vulnerabilidade alta foi encontrada, executamos o mesmo apenas uma vez, segue o link do mesmo: 
+
+```
+https://github.com/victorts1991/fiap-tech-challenge-api/blob/main/ZAP-Report.html
+```
+
+## RIPD: 
+
+```
+https://github.com/victorts1991/fiap-tech-challenge-api/blob/main/RIPD.pdf
+```
+
+## Desenho da Arquitetura: 
+
+```
+https://miro.com/app/board/uXjVKus1xAY=/
+```
 
 ### Tech Challenge 4 e 5:
+
 ### Passos para homologação dos professores da Fiap
 
 1. Faça o login na plataforma da AWS;
