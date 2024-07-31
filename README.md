@@ -24,6 +24,7 @@ https://github.com/victorts1991/fiap-tech-challenge-api/blob/main/RIPD.pdf
 https://miro.com/app/board/uXjVKus1xAY=/
 ```
 
+
 ### Tech Challenge 4 e 5:
 
 ### Passos para homologação dos professores da Fiap
